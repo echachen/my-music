@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>我的私人音乐站</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background: #e3f2fd;
+            font-family: -apple-system, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        /* 延续你喜欢的蓝色渐变风格 */
+        .main-card {
+            width: 90%;
+            max-width: 500px;
+            background: linear-gradient(135deg, #1a73e8, #64b5f6);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(26, 115, 232, 0.3);
+        }
+        .header {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        /* 深度美化 APlayer 内部样式 */
+        #player {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .aplayer { margin: 0 !important; border-radius: 15px !important; }
+    </style>
+</head>
+<body>
+
+<div class="main-card">
+    <div class="header">
+        <h2 style="margin:0;">🎵 我的云端电台</h2>
+        <p style="font-size:12px; opacity:0.8;">GitHub Pages 强力驱动</p>
+    </div>
+    
+    <div id="player"></div>
+</div>
+
+<script>
+    const ap = new APlayer({
+        container: document.getElementById('player'),
+        listFolded: false, // 默认展开列表
+        listMaxHeight: '300px',
+        theme: '#1a73e8',  // 主题色
+        audio: [
+            {
+                name: '最知心的朋友', // 歌曲名称
+                artist: '歌手名字',
+                url: 'music/最知心的朋友.mp3', // 这里的路径要对应你上传的文件名
+                cover: 'https://via.placeholder.com/300/1a73e8/ffffff?text=Music' // 封面图
+            },
+            {
+                name: '亲爱的妈妈',
+                artist: '歌手名字',
+                url: 'music/亲爱的妈妈.mp3',
+                cover: 'https://via.placeholder.com/300/1a73e8/ffffff?text=Music'
+            }
+            // 以后每增加一首歌，只需在这里加一行
+        ]
+    });
+</script>
+
+</body>
+</html>
