@@ -3,76 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>我的私人全自动音乐站</title>
+    <title>ECHACHEN'S MUSIC</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
     <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
     <style>
-        body { margin: 0; background: #e3f2fd; font-family: -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        body { margin: 0; background: #e3f2fd; font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; }
         .main-card { width: 90%; max-width: 500px; background: linear-gradient(135deg, #1a73e8, #64b5f6); padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(26, 115, 232, 0.3); }
         .header { color: white; text-align: center; margin-bottom: 20px; }
-        #player { border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); background: white; }
+        #player { border-radius: 15px; overflow: hidden; }
+        .aplayer { margin: 0 !important; border-radius: 15px !important; }
     </style>
 </head>
 <body>
 
 <div class="main-card">
     <div class="header">
-        <h2 style="margin:0;">🎵 我的全自动电台</h2>
-        <p style="font-size:12px; opacity:0.8;" id="status">正在扫描歌曲库...</p>
+        <h2 style="margin:0;">🎵 我的云端音乐</h2>
+        <p style="font-size:12px; opacity:0.8;">ECHACHEN'S REPOSITORY: my-music</p>
     </div>
     <div id="player"></div>
 </div>
 
 <script>
-    // 1. 配置你的 GitHub 仓库信息
-    const owner = 'echachen'; // 你的用户名
-    const repo = 'my-musics';  // 你的仓库名
-
-    // 2. 获取歌曲列表的函数
-    async function getMusicList() {
-        const url = `https://api.github.com/repos/${owner}/${repo}/contents/`;
-        try {
-            const response = await fetch(url);
-            const files = await response.json();
-            
-            // 过滤出所有以 .mp3 结尾的文件
-            const musicFiles = files.filter(file => file.name.toLowerCase().endsWith('.mp3'));
-            
-            // 将文件信息转换为 APlayer 格式
-            return musicFiles.map(file => ({
-                name: file.name.replace('.mp3', ''), // 自动用文件名当歌名
-                artist: '我的云端音乐',
-                url: file.name, // 因为文件就在根目录，直接用名字即可
+    const ap = new APlayer({
+        container: document.getElementById('player'),
+        listFolded: false, 
+        listMaxHeight: '300px',
+        theme: '#1a73e8',
+        audio: [
+            {
+                name: '唱一首天上的歌',
+                artist: '未知歌手',
+                url: '1.mp3', 
                 cover: 'https://via.placeholder.com/300/1a73e8/ffffff?text=Music'
-            }));
-        } catch (error) {
-            console.error('获取列表失败:', error);
-            document.getElementById('status').innerText = '加载失败，请刷新重试';
-            return [];
-        }
-    }
-
-    // 3. 初始化播放器
-    async function initPlayer() {
-        const songs = await getMusicList();
-        
-        if (songs.length === 0) {
-            document.getElementById('status').innerText = '仓库里还没有歌曲哦';
-            return;
-        }
-
-        const ap = new APlayer({
-            container: document.getElementById('player'),
-            listFolded: false,
-            listMaxHeight: '300px',
-            theme: '#1a73e8',
-            audio: songs // 自动生成的列表填入这里
-        });
-
-        document.getElementById('status').innerText = `已自动加载 ${songs.length} 首歌曲`;
-    }
-
-    initPlayer();
+            },
+            {
+                name: '亲爱的妈妈',
+                artist: '未知歌手',
+                url: '2.mp3', 
+                cover: 'https://via.placeholder.com/300/1a73e8/ffffff?text=Music'
+            },
+            {
+                name: '相约在主里',
+                artist: '未知歌手',
+                url: '3.mp3', 
+                cover: 'https://via.placeholder.com/300/1a73e8/ffffff?text=Music'
+            }
+        ]
+    });
 </script>
 </body>
 </html>
