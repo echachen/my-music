@@ -34,83 +34,93 @@
             background: rgba(255, 255, 255, 0.05); 
             backdrop-filter: blur(10px); 
             -webkit-backdrop-filter: blur(10px);
-            padding: 20px; 
+            padding: 25px 20px; /* 增加顶部内边距 */
             border-radius: 25px; 
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05); 
         }
 
-        .header { color: white; text-align: center; margin-bottom: 20px; }
+        .header { color: white; text-align: center; margin-bottom: 30px; } /* 增加标题间距 */
         .header h2 { font-weight: 300; letter-spacing: 1px; font-size: 1.2rem; }
 
-        /* APlayer 深度定制 */
-        #player { border-radius: 15px; overflow: hidden; }
+        /* APlayer 基础透明设置 */
+        #player { border-radius: 15px; overflow: visible !important; } /* 允许溢出，防止裁切 */
         .aplayer { background: transparent !important; box-shadow: none !important; border: none !important; margin: 0 !important; }
         .aplayer .aplayer-info, .aplayer .aplayer-list { background: transparent !important; }
-        .aplayer .aplayer-info .aplayer-music .aplayer-title { color: #fff !important; }
+
+        /* --- 核心修复：解决重叠问题的布局重构 --- */
+
+        /* 1. 歌名信息栏：增加强制底部间距 */
+        .aplayer .aplayer-info .aplayer-music {
+            margin-bottom: 25px !important; /* 关键：拉开与下方按钮的距离 */
+            position: relative !important;
+            z-index: 5 !important;
+        }
+        .aplayer .aplayer-info .aplayer-music .aplayer-title { color: #fff !important; font-size: 1.1rem !important; }
         .aplayer .aplayer-info .aplayer-music .aplayer-author { color: rgba(255, 255, 255, 0.7) !important; }
 
-        /* --- 核心布局修改：控制键置顶与放大 --- --- */
-        
-        /* 1. 将控制栏整体改为垂直反向布局，使按钮位于进度条上方 */
+        /* 2. 控制区域总容器：取消绝对定位，回归文档流 */
         .aplayer .aplayer-info .aplayer-controller {
+            position: relative !important; /* 核心修复 */
+            bottom: auto !important; left: auto !important;
             display: flex !important;
-            flex-direction: column-reverse !important;
+            flex-direction: column-reverse !important; /* 维持：按钮在上，进度条在下 */
+            margin-top: 0 !important;
+            padding-top: 5px !important;
         }
 
-        /* 2. 调整按钮容器样式 */
+        /* 3. 按钮栏容器：调整间距和对齐 */
         .aplayer .aplayer-info .aplayer-controller .aplayer-time {
             display: flex !important;
-            justify-content: space-around !important; /* 图标均匀分布 */
-            align-items: center !important;
-            width: 100% !important;
-            padding-bottom: 15px !important; /* 与下方进度条的间距 */
+            justify-content: space-between !important; /* 两端对齐更美观 */
+            padding: 0 15px 15px 15px !important; /* 增加内边距和底部距离 */
             color: #fff !important;
+            width: auto !important;
+            align-items: center !important;
         }
 
-        /* 3. 放大这 4 个功能图标 */
+        /* 4. 图标放大与美化 */
         .aplayer .aplayer-icon {
-            width: 28px !important;  /* 原本约 15-20px，现在显著加大 */
-            height: 28px !important;
-            opacity: 0.8 !important;
+            width: 30px !important; height: 30px !important; /* 确保足够大 */
+            opacity: 0.95 !important;
+            cursor: pointer !important;
         }
         .aplayer .aplayer-icon svg {
-            width: 100% !important;
-            height: 100% !important;
-            fill: #fff !important; /* 图标改为纯白 */
+            width: 100% !important; height: 100% !important;
+            fill: #fff !important;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); /* 增加立体阴影，防背景干扰 */
         }
+        .aplayer .aplayer-icon.aplayer-icon-mode { margin-right: 10px; } /* 微调间距 */
 
-        /* 4. 隐藏时间显示（可选），让界面更纯净，只留图标 */
-        .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner {
-            display: none !important;
-        }
+        /* 5. 隐藏时间数字，只留纯净图标 */
+        .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner { display: none !important; }
 
-        /* 5. 进度条美化 */
+        /* 6. 进度条容器微调 */
         .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap {
-            margin: 0 !important;
+            margin: 0 5px !important; /* 稍微缩进一点 */
             padding: 5px 0 !important;
+            opacity: 0.85 !important;
         }
 
-        /* --- 播放/暂停按钮新设计（右下角悬浮）--- --- */
+        /* --- 播放/暂停按钮新设计（右下角悬浮）保持不变 --- */
         .aplayer .aplayer-pic .aplayer-button {
             top: auto !important; left: auto !important; margin: 0 !important;
-            bottom: 10px !important; right: 10px !important;
+            bottom: 12px !important; right: 12px !important; /* 微调位置 */
             width: 42px !important; height: 42px !important;
             border-radius: 12px !important;
             background: rgba(255, 255, 255, 0.3) !important;
             backdrop-filter: blur(5px);
             display: flex !important; justify-content: center; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
         }
         .aplayer .aplayer-pic .aplayer-button svg {
             width: 24px !important; height: 24px !important;
             transform: scale(1) !important; fill: #fff !important;
         }
 
-        /* 列表文字样式 */
-        .aplayer .aplayer-list ol li {
-            border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
-            color: rgba(255, 255, 255, 0.8) !important;
-        }
+        /* 列表样式保持不变 */
+        .aplayer .aplayer-list ol li { border-top: 1px solid rgba(255, 255, 255, 0.1) !important; color: rgba(255, 255, 255, 0.8) !important; }
+        .aplayer .aplayer-list ol li:hover { background: rgba(255, 255, 255, 0.15) !important; }
         .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(255, 255, 255, 0.2) !important; }
     </style>
 </head>
@@ -151,7 +161,7 @@
             const ap = new APlayer({
                 container: document.getElementById('player'),
                 listFolded: false, 
-                theme: 'rgba(255,255,255,0.6)', 
+                theme: 'rgba(255,255,255,0.7)', 
                 order: 'list',
                 audio: musicList
             });
