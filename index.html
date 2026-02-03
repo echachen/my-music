@@ -16,8 +16,7 @@
             font-family: 'Segoe UI', system-ui, sans-serif; 
             display: flex; 
             justify-content: center; 
-            /* 修改 1: 设置为顶部对齐，并增加顶部间距 */
-            align-items: flex-start; 
+            align-items: flex-start; /* 置顶布局 */
             padding-top: 50px; 
             min-height: 100vh; 
         }
@@ -28,39 +27,68 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* 毛玻璃容器 */
+        /* 极简透明容器 */
         .main-card { 
-            width: 90%; 
+            width: 95%; 
             max-width: 500px; 
-            background: rgba(255, 255, 255, 0.15); 
-            backdrop-filter: blur(15px); 
-            -webkit-backdrop-filter: blur(15px);
-            padding: 30px; 
-            border-radius: 30px; 
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1); 
+            background: rgba(255, 255, 255, 0.05); /* 极低不透明度，几乎全透 */
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
+            padding: 20px; 
+            border-radius: 25px; 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05); 
         }
 
-        .header { color: white; text-align: center; margin-bottom: 25px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .header h2 { font-weight: 300; letter-spacing: 2px; }
+        .header { color: white; text-align: center; margin-bottom: 20px; }
+        .header h2 { font-weight: 300; letter-spacing: 1px; font-size: 1.2rem; }
 
-        /* APlayer 细节美化 */
-        #player { border-radius: 20px; overflow: hidden; }
-        .aplayer { background: rgba(255, 255, 255, 0.8) !important; border: none !important; }
+        /* APlayer 深度透明化定制 */
+        #player { border-radius: 15px; overflow: hidden; }
         
-        /* 修改 2: 强制暂停键和播放键保持同样大小，不进行缩小动画 */
+        /* 1. 播放器整体背景设为透明 */
+        .aplayer { 
+            background: transparent !important; 
+            box-shadow: none !important; 
+            border: none !important; 
+            margin: 0 !important;
+        }
+
+        /* 2. 信息栏与列表设为透明 */
+        .aplayer .aplayer-info, 
+        .aplayer .aplayer-list { 
+            background: transparent !important; 
+        }
+
+        /* 3. 调整列表文字颜色为白色，增强在深色背景下的可读性 */
+        .aplayer .aplayer-list ol li {
+            border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+        .aplayer .aplayer-list ol li:hover {
+            background: rgba(255, 255, 255, 0.15) !important;
+        }
+        .aplayer .aplayer-list ol li.aplayer-list-light {
+            background: rgba(255, 255, 255, 0.2) !important;
+        }
+        .aplayer .aplayer-list ol li .aplayer-list-author {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        /* 4. 标题与歌手文字颜色 */
+        .aplayer .aplayer-info .aplayer-music .aplayer-title { color: #fff !important; }
+        .aplayer .aplayer-info .aplayer-music .aplayer-author { color: rgba(255, 255, 255, 0.7) !important; }
+
+        /* 5. 暂停键固定大小修复 */
         .aplayer .aplayer-pic .aplayer-button {
             width: 40px !important;
             height: 40px !important;
-            opacity: 0.9 !important;
+            opacity: 1 !important;
+            background: rgba(255, 255, 255, 0.2) !important; /* 按钮半透白 */
         }
         .aplayer .aplayer-pic .aplayer-button svg {
-            width: 100% !important;
-            height: 100% !important;
-            transform: scale(1) !important; /* 禁止 APlayer 默认的缩小效果 */
-        }
-        .aplayer .aplayer-pic .aplayer-button.aplayer-pause {
-            margin: 0 !important; /* 修正可能的偏移 */
+            transform: scale(1) !important;
+            fill: #fff !important;
         }
     </style>
 </head>
@@ -69,26 +97,24 @@
 <div class="main-card">
     <div class="header">
         <h2 style="margin:0;">🎵 和平之后圣乐分享</h2>
-        <p style="font-size:12px; opacity:0.8; margin-top:10px;" id="status">正在同步云端音乐库...</p>
+        <p style="font-size:11px; opacity:0.6; margin-top:5px;" id="status">同步中...</p>
     </div>
     <div id="player"></div>
 </div>
 
 <script>
-    // 配置信息
     const CONFIG = {
         owner: 'echachen',
         repo: 'my-music',
-        artistName: 'ECHACHEN COLLECTION',
-        defaultCover: 'https://via.placeholder.com/300/1a73e8/ffffff?text=Music'
+        artistName: '圣乐合辑',
+        defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
     };
 
     async function initMusicStation() {
         const statusEl = document.getElementById('status');
         try {
-            // 自动扫描仓库文件
             const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/`);
-            if (!resp.ok) throw new Error('API Error');
+            if (!resp.ok) throw new Error('API Fail');
             const files = await resp.json();
             
             const musicList = files
@@ -101,22 +127,21 @@
                 }));
 
             if (musicList.length === 0) {
-                statusEl.innerText = "仓库里暂时没有发现音乐文件";
+                statusEl.innerText = "暂无圣乐文件";
                 return;
             }
 
             const ap = new APlayer({
                 container: document.getElementById('player'),
                 listFolded: false, 
-                theme: '#1a73e8',
+                theme: 'rgba(255,255,255,0.5)', /* 进度条颜色 */
                 order: 'list',
                 audio: musicList
             });
 
-            statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
+            statusEl.innerText = `已加载 ${musicList.length} 首圣乐`;
         } catch (err) {
-            statusEl.innerText = "加载失败，请检查网络";
-            console.error(err);
+            statusEl.innerText = "同步失败";
         }
     }
 
