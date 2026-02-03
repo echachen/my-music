@@ -119,10 +119,18 @@
             box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4) !important;
             display: flex !important; justify-content: center !important; align-items: center !important;
         }
-        .aplayer .aplayer-pic .aplayer-button svg { 
-            width: 40px !important; height: 40px !important; 
-            fill: #fff !important; transform: none !important; margin: 0 !important;
-        }
+/* 强制图标完美居中 */
+.aplayer .aplayer-pic .aplayer-button svg {
+    width: 40px !important;  /* 你设定的大小 */
+    height: 40px !important;
+    fill: #fff !important;   /* 纯白色 */
+    
+    /* 核心调试代码：清除所有偏移 */
+    margin: 0 !important;      /* 去掉所有外边距 */
+    padding: 0 !important;     /* 去掉所有内边距 */
+    transform: none !important; /* 禁止任何变形位移 */
+    display: block !important; /* 确保它是一个块级元素，听从 Flexbox 指挥 */
+}
     </style>
 </head>
 <body>
