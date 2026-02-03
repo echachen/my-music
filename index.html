@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ECHACHEN'S PREMIUM MUSIC</title>
+    <title>和平之后圣乐分享</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
     <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
     <style>
@@ -16,7 +16,9 @@
             font-family: 'Segoe UI', system-ui, sans-serif; 
             display: flex; 
             justify-content: center; 
-            align-items: center; 
+            /* 修改 1: 设置为顶部对齐，并增加顶部间距 */
+            align-items: flex-start; 
+            padding-top: 50px; 
             min-height: 100vh; 
         }
 
@@ -45,8 +47,21 @@
         /* APlayer 细节美化 */
         #player { border-radius: 20px; overflow: hidden; }
         .aplayer { background: rgba(255, 255, 255, 0.8) !important; border: none !important; }
-        .aplayer-list ol li { border-top: 1px solid rgba(0,0,0,0.05) !important; }
-        .aplayer-list ol li:hover { background: #e3f2fd !important; }
+        
+        /* 修改 2: 强制暂停键和播放键保持同样大小，不进行缩小动画 */
+        .aplayer .aplayer-pic .aplayer-button {
+            width: 40px !important;
+            height: 40px !important;
+            opacity: 0.9 !important;
+        }
+        .aplayer .aplayer-pic .aplayer-button svg {
+            width: 100% !important;
+            height: 100% !important;
+            transform: scale(1) !important; /* 禁止 APlayer 默认的缩小效果 */
+        }
+        .aplayer .aplayer-pic .aplayer-button.aplayer-pause {
+            margin: 0 !important; /* 修正可能的偏移 */
+        }
     </style>
 </head>
 <body>
@@ -54,7 +69,7 @@
 <div class="main-card">
     <div class="header">
         <h2 style="margin:0;">🎵 和平之后圣乐分享</h2>
-        <p style="font-size:12px; opacity:0.8; margin-top:10px;" id="status">正在同步您的 GitHub 音乐库...</p>
+        <p style="font-size:12px; opacity:0.8; margin-top:10px;" id="status">正在同步云端音乐库...</p>
     </div>
     <div id="player"></div>
 </div>
@@ -73,12 +88,13 @@
         try {
             // 自动扫描仓库文件
             const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/`);
+            if (!resp.ok) throw new Error('API Error');
             const files = await resp.json();
             
             const musicList = files
                 .filter(f => f.name.toLowerCase().endsWith('.mp3'))
                 .map(f => ({
-                    name: f.name.replace('.mp3', ''),
+                    name: f.name.replace(/\.mp3$/i, ''),
                     artist: CONFIG.artistName,
                     url: f.name,
                     cover: CONFIG.defaultCover
@@ -99,7 +115,7 @@
 
             statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
         } catch (err) {
-            statusEl.innerText = "加载失败，请检查 Actions 部署状态";
+            statusEl.innerText = "加载失败，请检查网络";
             console.error(err);
         }
     }
