@@ -3,54 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ECHACHEN'S MUSIC</title>
+    <title>ECHACHEN'S PREMIUM MUSIC</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
     <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
     <style>
-        body { margin: 0; background: #e3f2fd; font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; }
-        .main-card { width: 90%; max-width: 500px; background: linear-gradient(135deg, #1a73e8, #64b5f6); padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(26, 115, 232, 0.3); }
-        .header { color: white; text-align: center; margin-bottom: 20px; }
-        #player { border-radius: 15px; overflow: hidden; }
-        .aplayer { margin: 0 !important; border-radius: 15px !important; }
+        /* 动态渐变背景 */
+        body { 
+            margin: 0; 
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 毛玻璃容器 */
+        .main-card { 
+            width: 90%; 
+            max-width: 500px; 
+            background: rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px);
+            padding: 30px; 
+            border-radius: 30px; 
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1); 
+        }
+
+        .header { color: white; text-align: center; margin-bottom: 25px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .header h2 { font-weight: 300; letter-spacing: 2px; }
+
+        /* APlayer 细节美化 */
+        #player { border-radius: 20px; overflow: hidden; }
+        .aplayer { background: rgba(255, 255, 255, 0.8) !important; border: none !important; }
+        .aplayer-list ol li { border-top: 1px solid rgba(0,0,0,0.05) !important; }
+        .aplayer-list ol li:hover { background: #e3f2fd !important; }
     </style>
 </head>
 <body>
 
 <div class="main-card">
     <div class="header">
-        <h2 style="margin:0;">🎵 我的云端音乐</h2>
-        <p style="font-size:12px; opacity:0.8;">ECHACHEN'S REPOSITORY: my-music</p>
+        <h2 style="margin:0;">🎵 云端私享电台</h2>
+        <p style="font-size:12px; opacity:0.8; margin-top:10px;" id="status">正在同步您的 GitHub 音乐库...</p>
     </div>
     <div id="player"></div>
 </div>
 
 <script>
-    const ap = new APlayer({
-        container: document.getElementById('player'),
-        listFolded: false, 
-        listMaxHeight: '300px',
-        theme: '#1a73e8',
-        audio: [
-            {
-                name: '唱一首天上的歌',
-                artist: '未知歌手',
-                url: '1.mp3', 
-                cover: 'https://via.placeholder.com/300/1a73e8/ffffff?text=Music'
-            },
-            {
-                name: '亲爱的妈妈',
-                artist: '未知歌手',
-                url: '2.mp3', 
-                cover: 'https://via.placeholder.com/300/1a73e8/ffffff?text=Music'
-            },
-            {
-                name: '相约在主里',
-                artist: '未知歌手',
-                url: '3.mp3', 
-                cover: 'https://via.placeholder.com/300/1a73e8/ffffff?text=Music'
+    // 配置信息
+    const CONFIG = {
+        owner: 'echachen',
+        repo: 'my-music',
+        artistName: 'ECHACHEN COLLECTION',
+        defaultCover: 'https://via.placeholder.com/300/1a73e8/ffffff?text=Music'
+    };
+
+    async function initMusicStation() {
+        const statusEl = document.getElementById('status');
+        try {
+            // 自动扫描仓库文件
+            const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/`);
+            const files = await resp.json();
+            
+            const musicList = files
+                .filter(f => f.name.toLowerCase().endsWith('.mp3'))
+                .map(f => ({
+                    name: f.name.replace('.mp3', ''),
+                    artist: CONFIG.artistName,
+                    url: f.name,
+                    cover: CONFIG.defaultCover
+                }));
+
+            if (musicList.length === 0) {
+                statusEl.innerText = "仓库里暂时没有发现音乐文件";
+                return;
             }
-        ]
-    });
+
+            const ap = new APlayer({
+                container: document.getElementById('player'),
+                listFolded: false, 
+                theme: '#1a73e8',
+                order: 'list',
+                audio: musicList
+            });
+
+            statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
+        } catch (err) {
+            statusEl.innerText = "加载失败，请检查 Actions 部署状态";
+            console.error(err);
+        }
+    }
+
+    initMusicStation();
 </script>
 </body>
 </html>
