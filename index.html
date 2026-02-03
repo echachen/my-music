@@ -62,6 +62,7 @@
             display: flex !important;
             flex-direction: column-reverse !important; 
             position: relative !important;
+            border: none !important; /* 彻底移除可能的边框 */
         }
 
         /* 功能图标容器 */
@@ -73,57 +74,62 @@
             align-items: center !important;
         }
 
-        /* --- 修改 1: 4个控制图标纯净化 --- */
+        /* 4个功能图标纯净化 */
         .aplayer .aplayer-icon { width: 30px !important; height: 30px !important; opacity: 0.95 !important; }
         .aplayer .aplayer-icon svg { 
             width: 100% !important; height: 100% !important; 
             fill: #fff !important; 
-            filter: none !important; /* 去掉之前的阴影效果，变回纯净平面 */
+            filter: none !important; 
         }
         .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner { display: none !important; }
 
-        /* 进度条 */
-        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap { padding: 5px 0 !important; margin: 0 !important; opacity: 0.8; }
+        /* --- 修改核心：让进度条白线变透明 --- */
+        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap { 
+            padding: 5px 0 !important; 
+            margin: 0 !important; 
+        }
+        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar {
+            background: transparent !important; /* 让未播放部分的白线彻底透明 */
+            height: 3px !important; /* 稍微加粗一点进度条方便观察 */
+        }
+        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played {
+            background: rgba(233, 30, 99, 1) !important; /* 播放过的部分显示纯玫红色 */
+        }
 
-        /* 歌曲目录（列表） */
+        /* --- 修改核心：让目录分割线变透明 --- */
         .aplayer .aplayer-list {
             background: transparent !important;
             margin-top: 50px !important; 
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border: none !important; /* 移除顶部白线 */
         }
 
         /* 列表项美化 */
         .aplayer .aplayer-list ol li {
-            border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+            border: none !important; /* 移除列表项之间的白线 */
             color: rgba(255, 255, 255, 0.8) !important;
             padding: 12px 15px !important;
         }
         .aplayer .aplayer-list ol li:hover { background: rgba(255, 255, 255, 0.1) !important; }
         .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(255, 255, 255, 0.15) !important; }
-        .aplayer .aplayer-list ol li .aplayer-list-cur { background: #fff !important; }
+        .aplayer .aplayer-list ol li .aplayer-list-cur { background: rgba(233, 30, 99, 1) !important; } /* 当前播放指示器也换成玫红 */
 
-        /* --- 修改 2: 主播放/暂停按钮全新配色 --- */
+        /* 主播放/暂停按钮配色（玫红） */
         .aplayer .aplayer-pic .aplayer-button {
             top: auto !important; left: auto !important; margin: 0 !important;
             bottom: 12px !important; right: 12px !important;
             width: 44px !important; height: 44px !important;
             border-radius: 12px !important;
-            
-            /* 核心改动：换成醒目的玫红色，并去掉白色边框 */
-            background: rgba(233, 30, 99, 0.85) !important; /* 充满活力的半透明玫红 */
-            border: none !important; /* 去掉边框 */
-            
+            background: rgba(233, 30, 99, 0.9) !important; 
+            border: none !important;
             backdrop-filter: blur(5px);
-            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4) !important; /* 加上同色系的彩色光晕 */
-            
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4) !important;
             display: flex !important; 
             justify-content: center !important; 
             align-items: center !important;
         }
-        /* 按钮内图标 */
         .aplayer .aplayer-pic .aplayer-button svg { 
             width: 22px !important; height: 22px !important; 
-            fill: #fff !important; /* 保持图标为白色，对比清晰 */
+            fill: #fff !important; 
             transform: none !important; 
             margin: 0 !important;
         }
@@ -144,7 +150,7 @@
         owner: 'echachen',
         repo: 'my-music',
         artistName: '圣乐合辑',
-        defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Music'
+        defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
     };
 
     async function initMusicStation() {
@@ -166,7 +172,7 @@
             const ap = new APlayer({
                 container: document.getElementById('player'),
                 listFolded: false, 
-                theme: 'rgba(255,255,255,0.8)', 
+                theme: '#e91e63', /* 全局进度条颜色设为玫红 */
                 order: 'list',
                 audio: musicList
             });
