@@ -17,7 +17,7 @@
             display: flex; 
             justify-content: center; 
             align-items: flex-start; 
-            padding-top: 50px; 
+            padding-top: 40px; 
             min-height: 100vh; 
         }
 
@@ -27,101 +27,89 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* 极简透明容器 */
+        /* 极简透明卡片 */
         .main-card { 
             width: 95%; 
             max-width: 500px; 
             background: rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px);
-            padding: 25px 20px; /* 增加顶部内边距 */
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            padding: 25px 15px; 
             border-radius: 25px; 
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05); 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); 
         }
 
-        .header { color: white; text-align: center; margin-bottom: 30px; } /* 增加标题间距 */
+        .header { color: white; text-align: center; margin-bottom: 25px; }
         .header h2 { font-weight: 300; letter-spacing: 1px; font-size: 1.2rem; }
 
-        /* APlayer 基础透明设置 */
-        #player { border-radius: 15px; overflow: visible !important; } /* 允许溢出，防止裁切 */
+        /* APlayer 核心布局重组 */
+        #player { border-radius: 15px; overflow: visible !important; }
         .aplayer { background: transparent !important; box-shadow: none !important; border: none !important; margin: 0 !important; }
-        .aplayer .aplayer-info, .aplayer .aplayer-list { background: transparent !important; }
+        .aplayer .aplayer-info { background: transparent !important; padding: 0 !important; }
 
-        /* --- 核心修复：解决重叠问题的布局重构 --- */
-
-        /* 1. 歌名信息栏：增加强制底部间距 */
+        /* 1. 歌名信息栏 */
         .aplayer .aplayer-info .aplayer-music {
-            margin-bottom: 25px !important; /* 关键：拉开与下方按钮的距离 */
-            position: relative !important;
-            z-index: 5 !important;
+            margin-bottom: 35px !important; /* 拉开与下方按钮的距离 */
+            text-align: center;
+            width: 100%;
         }
         .aplayer .aplayer-info .aplayer-music .aplayer-title { color: #fff !important; font-size: 1.1rem !important; }
         .aplayer .aplayer-info .aplayer-music .aplayer-author { color: rgba(255, 255, 255, 0.7) !important; }
 
-        /* 2. 控制区域总容器：取消绝对定位，回归文档流 */
+        /* 2. 控制区域：按钮在上，进度条在下 */
         .aplayer .aplayer-info .aplayer-controller {
-            position: relative !important; /* 核心修复 */
-            bottom: auto !important; left: auto !important;
             display: flex !important;
-            flex-direction: column-reverse !important; /* 维持：按钮在上，进度条在下 */
-            margin-top: 0 !important;
-            padding-top: 5px !important;
+            flex-direction: column-reverse !important; 
+            position: relative !important;
         }
 
-        /* 3. 按钮栏容器：调整间距和对齐 */
+        /* 3. 功能图标容器：放大并均匀分布 */
         .aplayer .aplayer-info .aplayer-controller .aplayer-time {
             display: flex !important;
-            justify-content: space-between !important; /* 两端对齐更美观 */
-            padding: 0 15px 15px 15px !important; /* 增加内边距和底部距离 */
-            color: #fff !important;
-            width: auto !important;
+            justify-content: space-around !important; 
+            padding: 0 5px 20px 5px !important; /* 增加底部间距，避开列表 */
+            width: 100% !important;
             align-items: center !important;
         }
 
-        /* 4. 图标放大与美化 */
-        .aplayer .aplayer-icon {
-            width: 30px !important; height: 30px !important; /* 确保足够大 */
-            opacity: 0.95 !important;
-            cursor: pointer !important;
-        }
-        .aplayer .aplayer-icon svg {
-            width: 100% !important; height: 100% !important;
-            fill: #fff !important;
-            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); /* 增加立体阴影，防背景干扰 */
-        }
-        .aplayer .aplayer-icon.aplayer-icon-mode { margin-right: 10px; } /* 微调间距 */
-
-        /* 5. 隐藏时间数字，只留纯净图标 */
+        /* 图标放大 */
+        .aplayer .aplayer-icon { width: 30px !important; height: 30px !important; opacity: 0.9 !important; }
+        .aplayer .aplayer-icon svg { width: 100% !important; height: 100% !important; fill: #fff !important; }
         .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner { display: none !important; }
 
-        /* 6. 进度条容器微调 */
-        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap {
-            margin: 0 5px !important; /* 稍微缩进一点 */
-            padding: 5px 0 !important;
-            opacity: 0.85 !important;
+        /* 4. 进度条美化 */
+        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap { padding: 5px 0 !important; margin: 0 !important; }
+
+        /* --- 核心修复：将歌曲目录（列表）大幅度向下移动 --- */
+        .aplayer .aplayer-list {
+            background: transparent !important;
+            margin-top: 50px !important; /* 关键：撑开 50px 的间距，彻底避开进度条 */
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* --- 播放/暂停按钮新设计（右下角悬浮）保持不变 --- */
+        /* 列表项美化 */
+        .aplayer .aplayer-list ol li {
+            border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+            color: rgba(255, 255, 255, 0.8) !important;
+            padding: 12px 15px !important;
+        }
+        .aplayer .aplayer-list ol li:hover { background: rgba(255, 255, 255, 0.1) !important; }
+        .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(255, 255, 255, 0.15) !important; }
+        .aplayer .aplayer-list ol li .aplayer-list-cur { background: #fff !important; }
+
+        /* 播放/暂停按钮新设计（右下角悬浮） */
         .aplayer .aplayer-pic .aplayer-button {
             top: auto !important; left: auto !important; margin: 0 !important;
-            bottom: 12px !important; right: 12px !important; /* 微调位置 */
-            width: 42px !important; height: 42px !important;
+            bottom: 12px !important; right: 12px !important;
+            width: 44px !important; height: 44px !important;
             border-radius: 12px !important;
-            background: rgba(255, 255, 255, 0.3) !important;
+            background: rgba(255, 255, 255, 0.2) !important;
             backdrop-filter: blur(5px);
             display: flex !important; justify-content: center; align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
         }
-        .aplayer .aplayer-pic .aplayer-button svg {
-            width: 24px !important; height: 24px !important;
-            transform: scale(1) !important; fill: #fff !important;
-        }
-
-        /* 列表样式保持不变 */
-        .aplayer .aplayer-list ol li { border-top: 1px solid rgba(255, 255, 255, 0.1) !important; color: rgba(255, 255, 255, 0.8) !important; }
-        .aplayer .aplayer-list ol li:hover { background: rgba(255, 255, 255, 0.15) !important; }
-        .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(255, 255, 255, 0.2) !important; }
+        .aplayer .aplayer-pic .aplayer-button svg { width: 24px !important; height: 24px !important; fill: #fff !important; }
     </style>
 </head>
 <body>
@@ -139,7 +127,7 @@
         owner: 'echachen',
         repo: 'my-music',
         artistName: '圣乐合辑',
-        defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
+        defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Music'
     };
 
     async function initMusicStation() {
@@ -168,7 +156,7 @@
 
             statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
         } catch (err) {
-            statusEl.innerText = "同步失败，请检查 Actions";
+            statusEl.innerText = "同步失败";
         }
     }
 
