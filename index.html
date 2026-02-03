@@ -48,23 +48,29 @@
         .aplayer { background: transparent !important; box-shadow: none !important; border: none !important; margin: 0 !important; }
         .aplayer .aplayer-info { background: transparent !important; padding: 0 !important; }
 
-        /* 歌名信息栏 */
-        .aplayer .aplayer-info .aplayer-music {
-            margin-bottom: 35px !important;
-            text-align: center;
-            width: 100%;
-        }
-        .aplayer .aplayer-info .aplayer-music .aplayer-title { color: #fff !important; font-size: 1.1rem !important; }
-        .aplayer .aplayer-info .aplayer-music .aplayer-author { color: rgba(255, 255, 255, 0.7) !important; }
+     /* 1. 歌名信息栏：设置颜色并移除底边线 */
+.aplayer .aplayer-info .aplayer-music {
+    margin-bottom: 35px !important;
+    text-align: center;
+    width: 100%;
+    border: none !important; /* 关键：移除可能存在的底边白线 */
+}
+.aplayer .aplayer-info .aplayer-music .aplayer-title { color: #fff !important; font-size: 1.1rem !important; }
+.aplayer .aplayer-info .aplayer-music .aplayer-author { color: rgba(255, 255, 255, 0.7) !important; }
 
-        /* 控制区域：按钮在上，进度条在下 */
-        .aplayer .aplayer-info .aplayer-controller {
-            display: flex !important;
-            flex-direction: column-reverse !important; 
-            position: relative !important;
-            border: none !important; /* 移除可能的边框 */
-        }
-
+/* 2. 控制区域：按钮在上逻辑 + 彻底抹除所有边框线 */
+.aplayer .aplayer-info, 
+.aplayer .aplayer-info .aplayer-controller {
+    display: flex !important;
+    flex-direction: column-reverse !important; 
+    position: relative !important;
+    /* 核心修复：把上下左右所有可能的边框全部变透明 */
+    border: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
         /* --- 核心修复：移除按钮背景的所有白线 --- */
         .aplayer .aplayer-info .aplayer-controller .aplayer-time {
             display: flex !important;
