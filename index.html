@@ -31,7 +31,7 @@
         .main-card { 
             width: 95%; 
             max-width: 500px; 
-            background: rgba(255, 255, 255, 0.05); /* 极低不透明度，几乎全透 */
+            background: rgba(255, 255, 255, 0.05); 
             backdrop-filter: blur(10px); 
             -webkit-backdrop-filter: blur(10px);
             padding: 20px; 
@@ -46,7 +46,6 @@
         /* APlayer 深度透明化定制 */
         #player { border-radius: 15px; overflow: hidden; }
         
-        /* 1. 播放器整体背景设为透明 */
         .aplayer { 
             background: transparent !important; 
             box-shadow: none !important; 
@@ -54,13 +53,12 @@
             margin: 0 !important;
         }
 
-        /* 2. 信息栏与列表设为透明 */
         .aplayer .aplayer-info, 
         .aplayer .aplayer-list { 
             background: transparent !important; 
         }
 
-        /* 3. 调整列表文字颜色为白色，增强在深色背景下的可读性 */
+        /* 列表样式 */
         .aplayer .aplayer-list ol li {
             border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
             color: rgba(255, 255, 255, 0.8) !important;
@@ -75,21 +73,44 @@
             color: rgba(255, 255, 255, 0.5) !important;
         }
 
-        /* 4. 标题与歌手文字颜色 */
         .aplayer .aplayer-info .aplayer-music .aplayer-title { color: #fff !important; }
         .aplayer .aplayer-info .aplayer-music .aplayer-author { color: rgba(255, 255, 255, 0.7) !important; }
 
-        /* 5. 暂停键固定大小修复 */
+        /* --- 核心修改：重新设计播放按钮 --- */
         .aplayer .aplayer-pic .aplayer-button {
-            width: 40px !important;
-            height: 40px !important;
+            /* 1. 重置默认的居中定位 */
+            top: auto !important;
+            left: auto !important;
+            margin: 0 !important;
+            transform: none !important;
+
+            /* 2. 新定位：放置在右下角 */
+            bottom: 10px !important;
+            right: 10px !important;
+
+            /* 3. 新外观：稍微缩小，圆角矩形，加阴影 */
+            width: 38px !important;
+            height: 38px !important;
+            border-radius: 10px !important; /* 圆角矩形，不再是正圆 */
+            background: rgba(255, 255, 255, 0.25) !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important; /* 立体感阴影 */
+            backdrop-filter: blur(5px);
             opacity: 1 !important;
-            background: rgba(255, 255, 255, 0.2) !important; /* 按钮半透白 */
+
+            /* 确保图标居中 */
+            display: flex !important;
+            justify-content: center;
+            align-items: center;
         }
+
+        /* 调整按钮内图标的大小 */
         .aplayer .aplayer-pic .aplayer-button svg {
+            width: 20px !important;
+            height: 20px !important;
             transform: scale(1) !important;
             fill: #fff !important;
         }
+        
     </style>
 </head>
 <body>
@@ -134,7 +155,7 @@
             const ap = new APlayer({
                 container: document.getElementById('player'),
                 listFolded: false, 
-                theme: 'rgba(255,255,255,0.5)', /* 进度条颜色 */
+                theme: 'rgba(255,255,255,0.5)', 
                 order: 'list',
                 audio: musicList
             });
