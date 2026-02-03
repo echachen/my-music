@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
     <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
     <style>
-        /* 动态渐变背景 */
+        /* 1. 动态渐变背景 */
         body { 
             margin: 0; 
             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
@@ -27,7 +27,7 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* 极简透明卡片 */
+        /* 2. 极简透明卡片 */
         .main-card { 
             width: 95%; 
             max-width: 500px; 
@@ -43,7 +43,7 @@
         .header { color: white; text-align: center; margin-bottom: 25px; }
         .header h2 { font-weight: 300; letter-spacing: 1px; font-size: 1.2rem; }
 
-        /* APlayer 核心布局 */
+        /* 3. APlayer 基础设置 */
         #player { border-radius: 15px; overflow: visible !important; }
         .aplayer { background: transparent !important; box-shadow: none !important; border: none !important; margin: 0 !important; }
         .aplayer .aplayer-info { background: transparent !important; padding: 0 !important; }
@@ -57,42 +57,45 @@
         .aplayer .aplayer-info .aplayer-music .aplayer-title { color: #fff !important; font-size: 1.1rem !important; }
         .aplayer .aplayer-info .aplayer-music .aplayer-author { color: rgba(255, 255, 255, 0.7) !important; }
 
-        /* 控制区域：按钮在上，进度条在下 */
+        /* --- 核心修改：彻底抹除 4 个按钮背景处的所有线条 --- */
+        .aplayer .aplayer-info .aplayer-controller,
+        .aplayer .aplayer-info .aplayer-controller .aplayer-time,
+        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap {
+            border: none !important;
+            border-top: none !important;
+            box-shadow: none !important;
+            outline: none !important;
+            background: transparent !important;
+        }
+
+        /* 控制区域布局：按钮在上 */
         .aplayer .aplayer-info .aplayer-controller {
             display: flex !important;
             flex-direction: column-reverse !important; 
             position: relative !important;
-            border: none !important; /* 移除可能的边框 */
         }
 
-        /* --- 核心修复：移除按钮背景的所有白线 --- */
+        /* 4 个功能图标容器 */
         .aplayer .aplayer-info .aplayer-controller .aplayer-time {
             display: flex !important;
             justify-content: space-around !important; 
             padding: 0 5px 20px 5px !important; 
             width: 100% !important;
             align-items: center !important;
-            border: none !important;     /* 彻底移除背景线 */
-            background: none !important; /* 彻底移除背景颜色 */
-            outline: none !important;
         }
 
-        /* 功能图标纯净化 */
+        /* 图标样式 */
         .aplayer .aplayer-icon { width: 30px !important; height: 30px !important; opacity: 0.95 !important; }
         .aplayer .aplayer-icon svg { width: 100% !important; height: 100% !important; fill: #fff !important; }
         .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner { display: none !important; }
 
-        /* 进度条：未播放部分设为全透明 */
-        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap { padding: 5px 0 !important; margin: 0 !important; }
+        /* 进度条透明轨道 */
         .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar {
-            background: transparent !important; /* 轨道设为透明 */
+            background: rgba(255,255,255,0.1) !important; 
             height: 3px !important;
         }
-        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played {
-            background: rgba(233, 30, 99, 1) !important; /* 已播放部分显示玫红 */
-        }
 
-        /* 歌曲目录：下移并移除所有分割线 */
+        /* 4. 歌曲目录下移 */
         .aplayer .aplayer-list {
             background: transparent !important;
             margin-top: 50px !important; 
@@ -105,9 +108,8 @@
         }
         .aplayer .aplayer-list ol li:hover { background: rgba(255, 255, 255, 0.1) !important; }
         .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(255, 255, 255, 0.15) !important; }
-        .aplayer .aplayer-list ol li .aplayer-list-cur { background: rgba(233, 30, 99, 1) !important; }
 
-        /* 播放/暂停按钮：玫红配色与居中 */
+        /* 5. 播放/暂停按钮：玫红配色与强制居中 */
         .aplayer .aplayer-pic .aplayer-button {
             top: auto !important; left: auto !important; margin: 0 !important;
             bottom: 12px !important; right: 10px !important;
@@ -117,20 +119,22 @@
             border: none !important;
             backdrop-filter: blur(25px);
             box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4) !important;
-            display: flex !important; justify-content: center !important; align-items: center !important;
+            /* Flex 布局确保子元素居中 */
+            display: flex !important; 
+            justify-content: center !important; 
+            align-items: center !important;
         }
-/* 强制图标完美居中 */
-.aplayer .aplayer-pic .aplayer-button svg {
-    width: 40px !important;  /* 你设定的大小 */
-    height: 40px !important;
-    fill: #fff !important;   /* 纯白色 */
-    
-    /* 核心调试代码：清除所有偏移 */
-    margin: 0 !important;      /* 去掉所有外边距 */
-    padding: 0 !important;     /* 去掉所有内边距 */
-    transform: none !important; /* 禁止任何变形位移 */
-    display: block !important; /* 确保它是一个块级元素，听从 Flexbox 指挥 */
-}
+
+        /* 播放/暂停“三角”图标调优 */
+        .aplayer .aplayer-pic .aplayer-button svg {
+            width: 30px !important;  /* 按钮是 44px，三角设为 30px 最均衡 */
+            height: 30px !important;
+            fill: #fff !important;
+            margin: 0 !important; 
+            padding: 0 !important;
+            transform: none !important;
+            display: block !important;
+        }
     </style>
 </head>
 <body>
