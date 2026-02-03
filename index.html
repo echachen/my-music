@@ -16,7 +16,7 @@
             font-family: 'Segoe UI', system-ui, sans-serif; 
             display: flex; 
             justify-content: center; 
-            align-items: flex-start; /* 置顶布局 */
+            align-items: flex-start; 
             padding-top: 50px; 
             min-height: 100vh; 
         }
@@ -43,74 +43,75 @@
         .header { color: white; text-align: center; margin-bottom: 20px; }
         .header h2 { font-weight: 300; letter-spacing: 1px; font-size: 1.2rem; }
 
-        /* APlayer 深度透明化定制 */
+        /* APlayer 深度定制 */
         #player { border-radius: 15px; overflow: hidden; }
+        .aplayer { background: transparent !important; box-shadow: none !important; border: none !important; margin: 0 !important; }
+        .aplayer .aplayer-info, .aplayer .aplayer-list { background: transparent !important; }
+        .aplayer .aplayer-info .aplayer-music .aplayer-title { color: #fff !important; }
+        .aplayer .aplayer-info .aplayer-music .aplayer-author { color: rgba(255, 255, 255, 0.7) !important; }
+
+        /* --- 核心布局修改：控制键置顶与放大 --- --- */
         
-        .aplayer { 
-            background: transparent !important; 
-            box-shadow: none !important; 
-            border: none !important; 
+        /* 1. 将控制栏整体改为垂直反向布局，使按钮位于进度条上方 */
+        .aplayer .aplayer-info .aplayer-controller {
+            display: flex !important;
+            flex-direction: column-reverse !important;
+        }
+
+        /* 2. 调整按钮容器样式 */
+        .aplayer .aplayer-info .aplayer-controller .aplayer-time {
+            display: flex !important;
+            justify-content: space-around !important; /* 图标均匀分布 */
+            align-items: center !important;
+            width: 100% !important;
+            padding-bottom: 15px !important; /* 与下方进度条的间距 */
+            color: #fff !important;
+        }
+
+        /* 3. 放大这 4 个功能图标 */
+        .aplayer .aplayer-icon {
+            width: 28px !important;  /* 原本约 15-20px，现在显著加大 */
+            height: 28px !important;
+            opacity: 0.8 !important;
+        }
+        .aplayer .aplayer-icon svg {
+            width: 100% !important;
+            height: 100% !important;
+            fill: #fff !important; /* 图标改为纯白 */
+        }
+
+        /* 4. 隐藏时间显示（可选），让界面更纯净，只留图标 */
+        .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner {
+            display: none !important;
+        }
+
+        /* 5. 进度条美化 */
+        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap {
             margin: 0 !important;
+            padding: 5px 0 !important;
         }
 
-        .aplayer .aplayer-info, 
-        .aplayer .aplayer-list { 
-            background: transparent !important; 
+        /* --- 播放/暂停按钮新设计（右下角悬浮）--- --- */
+        .aplayer .aplayer-pic .aplayer-button {
+            top: auto !important; left: auto !important; margin: 0 !important;
+            bottom: 10px !important; right: 10px !important;
+            width: 42px !important; height: 42px !important;
+            border-radius: 12px !important;
+            background: rgba(255, 255, 255, 0.3) !important;
+            backdrop-filter: blur(5px);
+            display: flex !important; justify-content: center; align-items: center;
+        }
+        .aplayer .aplayer-pic .aplayer-button svg {
+            width: 24px !important; height: 24px !important;
+            transform: scale(1) !important; fill: #fff !important;
         }
 
-        /* 列表样式 */
+        /* 列表文字样式 */
         .aplayer .aplayer-list ol li {
             border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
             color: rgba(255, 255, 255, 0.8) !important;
         }
-        .aplayer .aplayer-list ol li:hover {
-            background: rgba(255, 255, 255, 0.15) !important;
-        }
-        .aplayer .aplayer-list ol li.aplayer-list-light {
-            background: rgba(255, 255, 255, 0.2) !important;
-        }
-        .aplayer .aplayer-list ol li .aplayer-list-author {
-            color: rgba(255, 255, 255, 0.5) !important;
-        }
-
-        .aplayer .aplayer-info .aplayer-music .aplayer-title { color: #fff !important; }
-        .aplayer .aplayer-info .aplayer-music .aplayer-author { color: rgba(255, 255, 255, 0.7) !important; }
-
-        /* --- 核心修改：重新设计播放按钮 --- */
-        .aplayer .aplayer-pic .aplayer-button {
-            /* 1. 重置默认的居中定位 */
-            top: auto !important;
-            left: auto !important;
-            margin: 0 !important;
-            transform: none !important;
-
-            /* 2. 新定位：放置在右下角 */
-            bottom: 10px !important;
-            right: 10px !important;
-
-            /* 3. 新外观：稍微缩小，圆角矩形，加阴影 */
-            width: 38px !important;
-            height: 38px !important;
-            border-radius: 10px !important; /* 圆角矩形，不再是正圆 */
-            background: rgba(255, 255, 255, 0.25) !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important; /* 立体感阴影 */
-            backdrop-filter: blur(5px);
-            opacity: 1 !important;
-
-            /* 确保图标居中 */
-            display: flex !important;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* 调整按钮内图标的大小 */
-        .aplayer .aplayer-pic .aplayer-button svg {
-            width: 20px !important;
-            height: 20px !important;
-            transform: scale(1) !important;
-            fill: #fff !important;
-        }
-        
+        .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(255, 255, 255, 0.2) !important; }
     </style>
 </head>
 <body>
@@ -147,22 +148,17 @@
                     cover: CONFIG.defaultCover
                 }));
 
-            if (musicList.length === 0) {
-                statusEl.innerText = "暂无圣乐文件";
-                return;
-            }
-
             const ap = new APlayer({
                 container: document.getElementById('player'),
                 listFolded: false, 
-                theme: 'rgba(255,255,255,0.5)', 
+                theme: 'rgba(255,255,255,0.6)', 
                 order: 'list',
                 audio: musicList
             });
 
-            statusEl.innerText = `已加载 ${musicList.length} 首圣乐`;
+            statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
         } catch (err) {
-            statusEl.innerText = "同步失败";
+            statusEl.innerText = "同步失败，请检查 Actions";
         }
     }
 
