@@ -166,7 +166,7 @@
     async function initMusicStation() {
         const statusEl = document.getElementById('status');
         try {
-            const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/`);
+            const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/?t=${new Date().getTime()}`);
             if (!resp.ok) throw new Error('API Fail');
             const files = await resp.json();
             
