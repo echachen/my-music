@@ -69,7 +69,7 @@
             background: transparent !important;
         }
 
-        /* 3. 按钮容器 */
+        /* 3. 按钮与时间容器 */
         .aplayer .aplayer-info .aplayer-controller .aplayer-time {
             display: flex !important;
             justify-content: space-around !important; 
@@ -80,19 +80,14 @@
             background: none !important;
         }
 
-        /* ====== 只去除音量按钮（唯一改动） ====== */
-        .aplayer .aplayer-volume {
-            display: none !important;
-        }
-
         /* 时间显示：圣母蓝配色 */
         .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner {
-            display: inline !important;
+            display: inline !important; 
             color: #fff !important;
             font-size: 13px !important;
         }
         .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-ptime {
-            color: rgb(31, 58, 138) !important;
+            color: rgb(31, 58, 138) !important; /* 当前时间：圣母蓝 */
             font-weight: bold;
         }
         .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-dtime {
@@ -110,7 +105,7 @@
             height: 3px !important;
         }
         .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played {
-            background: rgb(31, 58, 138) !important;
+            background: rgb(31, 58, 138) !important; /* 已播放进度：圣母蓝 */
         }
 
         /* 歌曲目录样式 */
@@ -129,13 +124,13 @@
         .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(255, 255, 255, 0.15) !important; }
         .aplayer .aplayer-list ol li .aplayer-list-cur { background: rgb(31, 58, 138) !important; }
 
-        /* 播放/暂停按钮 */
+        /* 播放/暂停按钮：圣母蓝配色 */
         .aplayer .aplayer-pic .aplayer-button {
             top: auto !important; left: auto !important; margin: 0 !important;
-            bottom: 12px !important; right: 9px !important;
+            bottom: 12px !important; right: 10px !important;
             width: 44px !important; height: 44px !important;
             border-radius: 12px !important;
-            background: rgba(31, 58, 138, 0.9) !important; 
+            background: rgba(31, 58, 138, 0.9) !important; /* 按钮背景：圣母蓝 */
             backdrop-filter: blur(5px);
             box-shadow: 0 4px 15px rgba(31, 58, 138, 0.4) !important;
             display: flex !important; justify-content: center !important; align-items: center !important;
@@ -183,7 +178,7 @@
             const ap = new APlayer({
                 container: document.getElementById('player'),
                 listFolded: false, 
-                theme: '#1f3a8a', 
+                theme: '#1f3a8a', /* 这里的十六进制代码对应 rgb(31, 58, 138) */
                 order: 'list',
                 audio: musicList
             });
