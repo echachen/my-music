@@ -144,7 +144,20 @@
         .aplayer .aplayer-pic .aplayer-button svg { 
             width: 40px !important; height: 40px !important; 
             fill: #fff !important; transform: none !important; margin: 0 !important;
-        }
+        
+        /* 仅仅是增加一个动画定义，不影响你原本的布局 */
+.loading-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s linear infinite;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -168,7 +181,7 @@
     async function initMusicStation() {
         const statusEl = document.getElementById('status');
         try {
-            const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/`);
+            const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/?t=${new Date().getTime()}`);
             if (!resp.ok) throw new Error('API Fail');
             const files = await resp.json();
             
@@ -196,6 +209,7 @@
     }
 
     initMusicStation();
+    document.getElementById('status').innerHTML = '<span class="loading-dot"></span>同步中...';
 </script>
 </body>
 </html>
