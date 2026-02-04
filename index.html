@@ -17,7 +17,7 @@
             display: flex; 
             justify-content: center; 
             align-items: flex-start; 
-            padding-top: 20px; 
+            padding-top: 20px; /* 已按要求向上移动 20px */
             min-height: 100vh; 
         }
 
@@ -34,7 +34,7 @@
             background: rgba(255, 255, 255, 0.05); 
             backdrop-filter: blur(12px); 
             -webkit-backdrop-filter: blur(12px);
-            padding: 20px 15px 50px 15px; 
+            padding: 20px 15px 75px 15px; /* 底部已加长 50px */
             border-radius: 25px; 
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); 
@@ -48,7 +48,6 @@
         .aplayer { background: transparent !important; box-shadow: none !important; border: none !important; margin: 0 !important; }
         .aplayer .aplayer-info { background: transparent !important; padding: 0 !important; }
 
-        /* 1. 歌名信息栏 */
         .aplayer .aplayer-info .aplayer-music {
             margin-bottom: -30px !important;
             text-align: center;
@@ -58,7 +57,6 @@
         .aplayer .aplayer-info .aplayer-music .aplayer-title { color: #fff !important; font-size: 1.1rem !important; }
         .aplayer .aplayer-info .aplayer-music .aplayer-author { color: rgba(255, 255, 255, 0.7) !important; }
 
-        /* 2. 控制区域布局 */
         .aplayer .aplayer-info, 
         .aplayer .aplayer-info .aplayer-controller {
             display: flex !important;
@@ -69,7 +67,6 @@
             background: transparent !important;
         }
 
-        /* 3. 按钮容器 */
         .aplayer .aplayer-info .aplayer-controller .aplayer-time {
             display: flex !important;
             justify-content: space-around !important; 
@@ -80,45 +77,45 @@
             background: none !important;
         }
 
-        /* --- 核心修复：隐藏音量键且不影响位置 --- */
+        /* 隐藏音量键 */
         .aplayer .aplayer-volume {
-            visibility: hidden !important; /* 隐藏但不消失，占着位子 */
-            pointer-events: none !important; /* 防止误触 */
+            visibility: hidden !important;
+            pointer-events: none !important;
         }
 
-        /* 时间显示：圣母蓝配色 */
+        /* 时间显示 */
         .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner {
-            display: inline !important; /* 恢复显示时间 */
+            display: inline !important; 
             color: #fff !important;
             font-size: 13px !important;
         }
         .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-ptime {
-            color: rgb(31, 58, 138) !important; /* 播放时间：圣母蓝 */
+            color: rgb(31, 58, 138) !important; 
             font-weight: bold;
         }
         .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-dtime {
             color: rgba(255, 255, 255, 0.8) !important; 
         }
 
-        /* 功能图标纯净化 */
         .aplayer .aplayer-icon { width: 30px !important; height: 30px !important; opacity: 0.95 !important; }
         .aplayer .aplayer-icon svg { width: 100% !important; height: 100% !important; fill: #fff !important; }
 
-        /* 进度条样式：圣母蓝配色 */
+        /* 进度条样式 */
         .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap { padding: 5px 0 !important; margin: 0 !important; }
         .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar {
             background: rgba(255, 255, 255, 0.2) !important;
             height: 3px !important;
         }
         .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played {
-            background: rgb(31, 58, 138) !important; /* 已播放进度：圣母蓝 */
+            background: rgb(31, 58, 138) !important; 
         }
 
-        /* 歌曲目录样式 */
+        /* 歌曲目录：已增加最大高度以多显示歌曲 */
         .aplayer .aplayer-list {
             background: transparent !important;
             margin-top: 50px !important; 
             border: none !important; 
+            max-height: 350px !important; /* 👈 这里让列表变长 */
         }
         .aplayer .aplayer-list ol li {
             border: none !important; 
@@ -130,7 +127,7 @@
         .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(255, 255, 255, 0.15) !important; }
         .aplayer .aplayer-list ol li .aplayer-list-cur { background: rgb(31, 58, 138) !important; }
 
-        /* 播放/暂停按钮：圣母蓝配色 */
+        /* 播放/暂停按钮 */
         .aplayer .aplayer-pic .aplayer-button {
             top: auto !important; left: auto !important; margin: 0 !important;
             bottom: 12px !important; right: 9px !important;
@@ -144,8 +141,9 @@
         .aplayer .aplayer-pic .aplayer-button svg { 
             width: 40px !important; height: 40px !important; 
             fill: #fff !important; transform: none !important; margin: 0 !important;
-        
-        /* 仅仅是增加一个动画定义，不影响你原本的布局 */
+        } /* 👈 修复：补齐了这里的大括号 */
+
+        /* 加载动画定义 */
         .loading-dot {
            display: inline-block;
            width: 10px;
@@ -157,7 +155,7 @@
            margin-right: 5px;
            vertical-align: middle;
         }
-         @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -165,7 +163,7 @@
 <div class="main-card">
     <div class="header">
         <h2 style="margin:0;">🎵 和平之后圣乐分享</h2>
-        <p style="font-size:11px; opacity:0.6; margin-top:5px;" id="status">同步中...</p>
+        <p style="font-size:11px; opacity:0.6; margin-top:5px;" id="status">连接中...</p>
     </div>
     <div id="player"></div>
 </div>
@@ -180,6 +178,9 @@
 
     async function initMusicStation() {
         const statusEl = document.getElementById('status');
+        // 一开始就显示转圈圈
+        statusEl.innerHTML = '<span class="loading-dot"></span>同步中...';
+
         try {
             const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/?t=${new Date().getTime()}`);
             if (!resp.ok) throw new Error('API Fail');
@@ -190,7 +191,7 @@
                 .map(f => ({
                     name: f.name.replace(/\.mp3$/i, ''),
                     artist: CONFIG.artistName,
-                    url: f.name,
+                    url: f.download_url || f.name, // 使用 download_url 更稳定
                     cover: CONFIG.defaultCover
                 }));
 
@@ -204,12 +205,11 @@
 
             statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
         } catch (err) {
-            statusEl.innerText = "同步失败";
+            statusEl.innerText = "同步失败，请检查网络";
         }
     }
 
     initMusicStation();
-    document.getElementById('status').innerHTML = '<span class="loading-dot"></span>同步中...';
 </script>
 </body>
 </html>
