@@ -79,11 +79,10 @@
             border: none !important;
             background: none !important;
         }
-
-        /* --- 核心修复：隐藏音量键且不影响位置 --- */
+       
+        /* --- 只移除音量按钮 --- */
         .aplayer .aplayer-volume {
-            visibility: hidden !important; /* 隐藏但不消失，占着位子 */
-            pointer-events: none !important; /* 防止误触 */
+            display: none !important;
         }
 
         /* 时间显示：圣母蓝配色 */
