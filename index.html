@@ -80,6 +80,11 @@
             background: none !important;
         }
 
+        /* --- 核心修改：隐藏音量键 --- */
+        .aplayer .aplayer-info .aplayer-controller .aplayer-volume {
+            display: none !important; /* */
+        }
+
         /* 时间显示：圣母蓝配色 */
         .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner {
             display: inline !important; 
@@ -130,7 +135,7 @@
             bottom: 12px !important; right: 9px !important;
             width: 44px !important; height: 44px !important;
             border-radius: 12px !important;
-            background: rgba(31, 58, 138, 0.9) !important; /* 按钮背景：圣母蓝 */
+            background: rgba(31, 58, 138, 0.9) !important; 
             backdrop-filter: blur(5px);
             box-shadow: 0 4px 15px rgba(31, 58, 138, 0.4) !important;
             display: flex !important; justify-content: center !important; align-items: center !important;
@@ -139,10 +144,6 @@
             width: 40px !important; height: 40px !important; 
             fill: #fff !important; transform: none !important; margin: 0 !important;
         }
-        /* 彻底隐藏音量控制按钮 */
-        .aplayer .aplayer-info .aplayer-controller .aplayer-volume {
-            display: none !important;
-}
     </style>
 </head>
 <body>
@@ -182,7 +183,7 @@
             const ap = new APlayer({
                 container: document.getElementById('player'),
                 listFolded: false, 
-                theme: '#1f3a8a', /* 这里的十六进制代码对应 rgb(31, 58, 138) */
+                theme: '#1f3a8a', 
                 order: 'list',
                 audio: musicList
             });
