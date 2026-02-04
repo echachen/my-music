@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>和平之后圣乐分享</title>
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
     <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
     <style>
@@ -164,95 +163,60 @@
       .aplayer .aplayer-list ol li .aplayer-list-author {
           display: none !important; /* 👈 隐藏列表右侧的歌手名 */
       }
-        /* 隐藏播放器内部的歌曲标题 */
-.aplayer .aplayer-info .aplayer-music {
-    display: none !important;
-}
-
     </style>
 </head>
-
 <body>
+
 <div class="main-card">
     <div class="header">
         <h2 style="margin:0;">🎵 和平之后圣乐分享</h2>
-
-        <div id="current-title"
-             style="margin-top:8px;font-size:16px;font-weight:500;color:#fff;">
-        </div>
-
-        <p id="status"
-           style="font-size:11px;opacity:0.6;margin-top:5px;">
-            连接中...
-        </p>
+        <p style="font-size:11px; opacity:0.6; margin-top:5px;" id="status">连接中...</p>
     </div>
-
     <div id="player"></div>
 </div>
 
 <script>
-/* =========================
-   基本配置
-========================= */
-const CONFIG = {
-    owner: 'echachen',
-    repo: 'my-music',
-    defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
-};
+    const CONFIG = {
+        owner: 'echachen',
+        repo: 'my-music',
+        artistName: '圣乐合辑',
+        defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
+    };
 
-/* =========================
-   主逻辑
-========================= */
-async function initMusicStation() {
-    const statusEl = document.getElementById('status');
-    const titleEl  = document.getElementById('current-title');
+    async function initMusicStation() {
+        const statusEl = document.getElementById('status');
+        // 一开始就显示转圈圈
+        statusEl.innerHTML = '<span class="loading-dot"></span>同步中...';
 
-    statusEl.innerHTML = '<span class="loading-dot"></span>同步中...';
+        try {
+            const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/?t=${new Date().getTime()}`);
+            if (!resp.ok) throw new Error('API Fail');
+            const files = await resp.json();
+            
+            const musicList = files
+                .filter(f => f.name.toLowerCase().endsWith('.mp3'))
+                .map(f => ({
+                    name: f.name.replace(/\.mp3$/i, ''),
+                    artist: '',
+                    url: f.download_url || f.name, // 使用 download_url 更稳定
+                    cover: CONFIG.defaultCover
+                }));
 
-    try {
-        const resp = await fetch(
-            `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/?t=${Date.now()}`
-        );
-        if (!resp.ok) throw new Error('API fail');
+            const ap = new APlayer({
+                container: document.getElementById('player'),
+                listFolded: false, 
+                theme: '#1f3a8a', 
+                order: 'list',
+                audio: musicList
+            });
 
-        const files = await resp.json();
-
-        const musicList = files
-            .filter(f => f.name.toLowerCase().endsWith('.mp3'))
-            .map(f => ({
-                name: f.name.replace(/\.mp3$/i, ''),
-                artist: '',
-                url: f.download_url,
-                cover: CONFIG.defaultCover
-            }));
-
-        /* =========================
-           创建 APlayer（只一次）
-        ========================= */
-        const ap = new APlayer({
-            container: document.getElementById('player'),
-            listFolded: false,
-            theme: '#1f3a8a',
-            order: 'list',
-            audio: musicList
-        });
-
-        function updateTitle() {
-            const current = ap.list.audios[ap.list.index];
-            titleEl.textContent = current ? current.name : '';
+            statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
+        } catch (err) {
+            statusEl.innerText = "同步失败，请检查网络";
         }
-      ap.on('listswitch', updateTitle);
-      ap.on('play', updateTitle);
-        updateTitle();
-        statusEl.textContent = `已成功加载 ${musicList.length} 首云端歌曲`;
-
-    } catch (e) {
-        statusEl.textContent = '同步失败，请检查网络';
-        console.error(e);
     }
-}
 
-initMusicStation();
+    initMusicStation();
 </script>
 </body>
 </html>
