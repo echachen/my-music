@@ -80,32 +80,32 @@
             background: none !important;
         }
 
-        /* --- 时间显示核心修复 --- */
+        /* 时间显示：圣母蓝配色 */
         .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner {
-            display: inline !important; /* 关键：恢复显示 */
-            color: #fff !important;    /* 总体白色 */
+            display: inline !important; 
+            color: #fff !important;
             font-size: 13px !important;
         }
         .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-ptime {
-            color: rgba(233, 30, 99, 1) !important; /* 播放时间：玫红 */
+            color: rgb(31, 58, 138) !important; /* 当前时间：圣母蓝 */
             font-weight: bold;
         }
         .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-dtime {
-            color: rgba(255, 255, 255, 0.8) !important; /* 总时长：半透明白 */
+            color: rgba(255, 255, 255, 0.8) !important; 
         }
 
         /* 功能图标纯净化 */
         .aplayer .aplayer-icon { width: 30px !important; height: 30px !important; opacity: 0.95 !important; }
         .aplayer .aplayer-icon svg { width: 100% !important; height: 100% !important; fill: #fff !important; }
 
-        /* 进度条样式 */
+        /* 进度条样式：圣母蓝配色 */
         .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap { padding: 5px 0 !important; margin: 0 !important; }
         .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar {
-            background: rgba(255, 255, 255, 0.2) !important; /* 轨道半透明 */
+            background: rgba(255, 255, 255, 0.2) !important;
             height: 3px !important;
         }
         .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played {
-            background: rgba(233, 30, 99, 1) !important; /* 已播放部分：玫红 */
+            background: rgb(31, 58, 138) !important; /* 已播放进度：圣母蓝 */
         }
 
         /* 歌曲目录样式 */
@@ -122,17 +122,17 @@
         }
         .aplayer .aplayer-list ol li:hover { background: rgba(255, 255, 255, 0.1) !important; }
         .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(255, 255, 255, 0.15) !important; }
-        .aplayer .aplayer-list ol li .aplayer-list-cur { background: rgba(233, 30, 99, 1) !important; }
+        .aplayer .aplayer-list ol li .aplayer-list-cur { background: rgb(31, 58, 138) !important; }
 
-        /* 播放/暂停按钮 */
+        /* 播放/暂停按钮：圣母蓝配色 */
         .aplayer .aplayer-pic .aplayer-button {
             top: auto !important; left: auto !important; margin: 0 !important;
             bottom: 12px !important; right: 9px !important;
             width: 44px !important; height: 44px !important;
             border-radius: 12px !important;
-            background: rgba(233, 30, 99, 0.9) !important; 
+            background: rgba(31, 58, 138, 0.9) !important; /* 按钮背景：圣母蓝 */
             backdrop-filter: blur(5px);
-            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4) !important;
+            box-shadow: 0 4px 15px rgba(31, 58, 138, 0.4) !important;
             display: flex !important; justify-content: center !important; align-items: center !important;
         }
         .aplayer .aplayer-pic .aplayer-button svg { 
@@ -178,7 +178,7 @@
             const ap = new APlayer({
                 container: document.getElementById('player'),
                 listFolded: false, 
-                theme: '#e91e63', 
+                theme: '#1f3a8a', /* 这里的十六进制代码对应 rgb(31, 58, 138) */
                 order: 'list',
                 audio: musicList
             });
