@@ -138,6 +138,30 @@
             width: 40px !important; height: 40px !important; 
             fill: #fff !important; transform: none !important; margin: 0 !important;
         }
+        /* 1. 确保时间显示容器可见 */
+    .aplayer .aplayer-info .aplayer-controller .aplayer-time {
+        display: flex !important; /* 强制显示时间 */
+        font-size: 14px !important; /* 调大字体 */
+        color: #666 !important; /* 基础文字改为深灰色 */
+    }
+
+    /* 2. 精准控制“当前播放时间”的颜色（使用你的玫红主题色） */
+    .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-ptime {
+        color: rgba(233, 30, 99, 1) !important; /* 当前时间设为玫红 */
+        font-weight: bold !important; /* 加粗 */
+    }
+
+    /* 3. 控制“总时长”的颜色 */
+    .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-dtime {
+        color: #999 !important; /* 总时长用浅灰色区分 */
+        margin-left: 2px;
+    }
+
+    /* 4. 调整时间显示的位置，避免遮挡 */
+    .aplayer .aplayer-info .aplayer-controller .aplayer-time {
+        bottom: 25px !important; /* 向上移动，不被进度条挡住 */
+    }
+</style>
     </style>
 </head>
 <body>
