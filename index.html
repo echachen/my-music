@@ -156,6 +156,15 @@
            vertical-align: middle;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+        /* 1. 歌名信息栏 */
+      .aplayer .aplayer-info .aplayer-music .aplayer-author {
+          display: none !important; /* 👈 隐藏播放器顶部的歌手名和横线 */
+}
+
+/* 同时也隐藏下方歌曲列表里的歌手名 */
+.aplayer .aplayer-list ol li .aplayer-list-author {
+    display: none !important; /* 👈 隐藏列表右侧的歌手名 */
+}
     </style>
 </head>
 <body>
@@ -190,7 +199,7 @@
                 .filter(f => f.name.toLowerCase().endsWith('.mp3'))
                 .map(f => ({
                     name: f.name.replace(/\.mp3$/i, ''),
-                    artist: '',
+                    artist: CONFIG.artistName,
                     url: f.download_url || f.name, // 使用 download_url 更稳定
                     cover: CONFIG.defaultCover
                 }));
