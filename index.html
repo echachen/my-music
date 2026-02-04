@@ -199,7 +199,7 @@
                 .filter(f => f.name.toLowerCase().endsWith('.mp3'))
                 .map(f => ({
                     name: f.name.replace(/\.mp3$/i, ''),
-                    artist: CONFIG.artistName,
+                    artist: '',
                     url: f.download_url || f.name, // 使用 download_url 更稳定
                     cover: CONFIG.defaultCover
                 }));
