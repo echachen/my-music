@@ -237,17 +237,13 @@ async function initMusicStation() {
             audio: musicList
         });
 
-        /* =========================
-           同步当前歌曲标题
-        ========================= */
         function updateTitle() {
             const current = ap.list.audios[ap.list.index];
             titleEl.textContent = current ? current.name : '';
         }
-
+      ap.on('listswitch', updateTitle);
+      ap.on('play', updateTitle);
         updateTitle();
-        ap.on('listswitch', updateTitle);
-
         statusEl.textContent = `已成功加载 ${musicList.length} 首云端歌曲`;
 
     } catch (e) {
