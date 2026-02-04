@@ -9,11 +9,12 @@
 <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
 
 <style>
+/* ===== 页面背景 ===== */
 body{
     margin:0;
     min-height:100vh;
     font-family:'Segoe UI',system-ui,sans-serif;
-    background:linear-gradient(-45deg,#ee7752,#e73c7e,#23a6d5,#23d5ab);
+    background:linear-gradient(-45deg,#36b6d8,#2aa3c8,#e94f8b,#f06292);
     background-size:400% 400%;
     animation:gradient 15s ease infinite;
     display:flex;
@@ -27,40 +28,43 @@ body{
     100%{background-position:0% 50%}
 }
 
+/* ===== 主卡片 ===== */
 .main-card{
     width:95%;
     max-width:520px;
-    background:rgba(255,255,255,.06);
+    background:rgba(255,255,255,.08);
     backdrop-filter:blur(14px);
-    border-radius:26px;
-    padding:25px 16px;
-    border:1px solid rgba(255,255,255,.2);
-    box-shadow:0 15px 35px rgba(0,0,0,.12);
+    border-radius:28px;
+    padding:26px 18px;
+    border:1px solid rgba(255,255,255,.25);
+    box-shadow:0 18px 40px rgba(0,0,0,.15);
 }
 
+/* ===== 标题 ===== */
 .header{
     text-align:center;
     color:#fff;
-    margin-bottom:22px;
+    margin-bottom:20px;
 }
 .header h2{
     margin:0;
-    font-weight:300;
+    font-weight:400;
     letter-spacing:1px;
     font-size:1.2rem;
 }
 #status{
     font-size:11px;
-    opacity:.6;
+    opacity:.65;
     margin-top:6px;
 }
 
-/* ===== APlayer 深度净化 ===== */
-.aplayer{
-    background:transparent!important;
-    box-shadow:none!important;
-    border:none!important;
-}
+/* ===============================
+   APlayer：只做「安全美化」
+   不碰结构 / 不碰按钮尺寸
+================================ */
+
+/* 整体透明 */
+.aplayer,
 .aplayer-info,
 .aplayer-controller{
     background:transparent!important;
@@ -68,9 +72,10 @@ body{
     box-shadow:none!important;
 }
 
+/* 歌名区 */
 .aplayer-music{
     text-align:center;
-    margin-bottom:-30px!important;
+    margin-bottom:-26px!important;
 }
 .aplayer-title{
     color:#fff!important;
@@ -80,10 +85,25 @@ body{
     color:rgba(255,255,255,.7)!important;
 }
 
+/* 图标 */
 .aplayer-icon svg{
     fill:#fff!important;
+    opacity:.9;
 }
 
+/* ===== 时间显示（你要的） ===== */
+.aplayer-time-inner{
+    display:block!important;
+    color:rgba(255,255,255,.75)!important;
+    font-size:12px!important;
+}
+
+/* 时间靠右，更干净 */
+.aplayer-time{
+    justify-content:flex-end!important;
+}
+
+/* 进度条 */
 .aplayer-bar{
     background:transparent!important;
     height:3px!important;
@@ -92,6 +112,7 @@ body{
     background:#e91e63!important;
 }
 
+/* 列表 */
 .aplayer-list{
     background:transparent!important;
     margin-top:50px!important;
@@ -101,6 +122,7 @@ body{
     border:none!important;
     color:rgba(255,255,255,.85)!important;
     font-size:15px!important;
+    padding:12px 14px!important;
 }
 .aplayer-list li:hover{
     background:rgba(255,255,255,.12)!important;
@@ -109,13 +131,8 @@ body{
     background:rgba(255,255,255,.18)!important;
 }
 
-.aplayer-pic .aplayer-button{
-    width:46px!important;
-    height:46px!important;
-    border-radius:14px!important;
-    background:rgba(233,30,99,.9)!important;
-    box-shadow:0 4px 15px rgba(233,30,99,.45)!important;
-}
+/* ⚠️ 注意：这里【没有】任何 .aplayer-button 的 CSS
+   播放按钮 = APlayer 原生大方块样式 */
 </style>
 </head>
 
@@ -133,7 +150,6 @@ body{
 const CONFIG = {
     owner: 'echachen',
     repo: 'my-music',
-    branch: 'main',
     artist: '圣乐合辑',
     cover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
 };
@@ -153,7 +169,7 @@ async function initMusicStation(){
             .map(f => ({
                 name: f.name.replace(/\.mp3$/i,''),
                 artist: CONFIG.artist,
-                url: f.download_url,   // ✅ 核心修复
+                url: f.download_url,
                 cover: CONFIG.cover
             }));
 
@@ -171,16 +187,14 @@ async function initMusicStation(){
             preload: 'metadata'
         });
 
-        /* 点击列表立即播放（你之前想要的） */
-        ap.on('listswitch', () => {
-            ap.play();
-        });
+        /* 点歌立即播放 */
+        ap.on('listswitch', () => ap.play());
 
-        status.innerText = `已加载 ${audioList.length} 首圣乐`;
+        status.innerText = `已成功加载 ${audioList.length} 首圣乐`;
 
-    }catch(err){
-        console.error(err);
-        status.innerText = '同步失败，请稍后再试';
+    }catch(e){
+        console.error(e);
+        status.innerText = '同步失败';
     }
 }
 
