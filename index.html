@@ -1,205 +1,195 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>和平之后圣乐分享</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>和平之后圣乐分享</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+    <style>
+        /* 动态渐变背景 */
+        body { 
+            margin: 0; 
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; 
+            padding-top: 40px; 
+            min-height: 100vh; 
+        }
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
-<script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-<style>
-/* ===== 页面背景 ===== */
-body{
-    margin:0;
-    min-height:100vh;
-    font-family:'Segoe UI',system-ui,sans-serif;
-    background:linear-gradient(-45deg,#36b6d8,#2aa3c8,#e94f8b,#f06292);
-    background-size:400% 400%;
-    animation:gradient 15s ease infinite;
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-    padding-top:40px;
-}
-@keyframes gradient{
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
-}
+        /* 极简透明卡片 */
+        .main-card { 
+            width: 95%; 
+            max-width: 500px; 
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            padding: 25px 15px; 
+            border-radius: 25px; 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); 
+        }
 
-/* ===== 主卡片 ===== */
-.main-card{
-    width:95%;
-    max-width:520px;
-    background:rgba(255,255,255,.08);
-    backdrop-filter:blur(14px);
-    border-radius:28px;
-    padding:26px 18px;
-    border:1px solid rgba(255,255,255,.25);
-    box-shadow:0 18px 40px rgba(0,0,0,.15);
-}
+        .header { color: white; text-align: center; margin-bottom: 25px; }
+        .header h2 { font-weight: 300; letter-spacing: 1px; font-size: 1.2rem; }
 
-/* ===== 标题 ===== */
-.header{
-    text-align:center;
-    color:#fff;
-    margin-bottom:20px;
-}
-.header h2{
-    margin:0;
-    font-weight:400;
-    letter-spacing:1px;
-    font-size:1.2rem;
-}
-#status{
-    font-size:11px;
-    opacity:.65;
-    margin-top:6px;
-}
+        /* APlayer 核心布局 */
+        #player { border-radius: 15px; overflow: visible !important; }
+        .aplayer { background: transparent !important; box-shadow: none !important; border: none !important; margin: 0 !important; }
+        .aplayer .aplayer-info { background: transparent !important; padding: 0 !important; }
 
-/* ===============================
-   APlayer：只做「安全美化」
-   不碰结构 / 不碰按钮尺寸
-================================ */
+        /* 1. 歌名信息栏 */
+        .aplayer .aplayer-info .aplayer-music {
+            margin-bottom: -30px !important;
+            text-align: center;
+            width: 100%;
+            border: none !important; 
+        }
+        .aplayer .aplayer-info .aplayer-music .aplayer-title { color: #fff !important; font-size: 1.1rem !important; }
+        .aplayer .aplayer-info .aplayer-music .aplayer-author { color: rgba(255, 255, 255, 0.7) !important; }
 
-/* 整体透明 */
-.aplayer,
-.aplayer-info,
-.aplayer-controller{
-    background:transparent!important;
-    border:none!important;
-    box-shadow:none!important;
-}
+        /* 2. 控制区域布局 */
+        .aplayer .aplayer-info, 
+        .aplayer .aplayer-info .aplayer-controller {
+            display: flex !important;
+            flex-direction: column-reverse !important; 
+            position: relative !important;
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
 
-/* 歌名区 */
-.aplayer-music{
-    text-align:center;
-    margin-bottom:-26px!important;
-}
-.aplayer-title{
-    color:#fff!important;
-    font-size:1.05rem!important;
-}
-.aplayer-author{
-    color:rgba(255,255,255,.7)!important;
-}
+        /* 3. 按钮与时间容器 */
+        .aplayer .aplayer-info .aplayer-controller .aplayer-time {
+            display: flex !important;
+            justify-content: space-around !important; 
+            width: 100% !important;
+            align-items: center !important;
+            padding: 0 5px 20px 5px !important; 
+            border: none !important;
+            background: none !important;
+        }
 
-/* 图标 */
-.aplayer-icon svg{
-    fill:#fff!important;
-    opacity:.9;
-}
+        /* --- 时间显示核心修复 --- */
+        .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner {
+            display: inline !important; /* 关键：恢复显示 */
+            color: #fff !important;    /* 总体白色 */
+            font-size: 13px !important;
+        }
+        .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-ptime {
+            color: rgba(233, 30, 99, 1) !important; /* 播放时间：玫红 */
+            font-weight: bold;
+        }
+        .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-dtime {
+            color: rgba(255, 255, 255, 0.8) !important; /* 总时长：半透明白 */
+        }
 
-/* ===== 时间显示（你要的） ===== */
-.aplayer-time-inner{
-    display:block!important;
-    color:rgba(255,255,255,.75)!important;
-    font-size:12px!important;
-}
+        /* 功能图标纯净化 */
+        .aplayer .aplayer-icon { width: 30px !important; height: 30px !important; opacity: 0.95 !important; }
+        .aplayer .aplayer-icon svg { width: 100% !important; height: 100% !important; fill: #fff !important; }
 
-/* 时间靠右，更干净 */
-.aplayer-time{
-    justify-content:flex-end!important;
-}
+        /* 进度条样式 */
+        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap { padding: 5px 0 !important; margin: 0 !important; }
+        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar {
+            background: rgba(255, 255, 255, 0.2) !important; /* 轨道半透明 */
+            height: 3px !important;
+        }
+        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played {
+            background: rgba(233, 30, 99, 1) !important; /* 已播放部分：玫红 */
+        }
 
-/* 进度条 */
-.aplayer-bar{
-    background:transparent!important;
-    height:3px!important;
-}
-.aplayer-played{
-    background:#e91e63!important;
-}
+        /* 歌曲目录样式 */
+        .aplayer .aplayer-list {
+            background: transparent !important;
+            margin-top: 50px !important; 
+            border: none !important; 
+        }
+        .aplayer .aplayer-list ol li {
+            border: none !important; 
+            color: rgba(255, 255, 255, 0.8) !important;
+            padding: 12px 15px !important;
+            font-size: 15px !important; 
+        }
+        .aplayer .aplayer-list ol li:hover { background: rgba(255, 255, 255, 0.1) !important; }
+        .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(255, 255, 255, 0.15) !important; }
+        .aplayer .aplayer-list ol li .aplayer-list-cur { background: rgba(233, 30, 99, 1) !important; }
 
-/* 列表 */
-.aplayer-list{
-    background:transparent!important;
-    margin-top:50px!important;
-    border:none!important;
-}
-.aplayer-list li{
-    border:none!important;
-    color:rgba(255,255,255,.85)!important;
-    font-size:15px!important;
-    padding:12px 14px!important;
-}
-.aplayer-list li:hover{
-    background:rgba(255,255,255,.12)!important;
-}
-.aplayer-list-light{
-    background:rgba(255,255,255,.18)!important;
-}
-
-/* ⚠️ 注意：这里【没有】任何 .aplayer-button 的 CSS
-   播放按钮 = APlayer 原生大方块样式 */
-</style>
+        /* 播放/暂停按钮 */
+        .aplayer .aplayer-pic .aplayer-button {
+            top: auto !important; left: auto !important; margin: 0 !important;
+            bottom: 12px !important; right: 10px !important;
+            width: 44px !important; height: 44px !important;
+            border-radius: 12px !important;
+            background: rgba(233, 30, 99, 0.9) !important; 
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4) !important;
+            display: flex !important; justify-content: center !important; align-items: center !important;
+        }
+        .aplayer .aplayer-pic .aplayer-button svg { 
+            width: 40px !important; height: 40px !important; 
+            fill: #fff !important; transform: none !important; margin: 0 !important;
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="main-card">
     <div class="header">
-        <h2>🎵 和平之后圣乐分享</h2>
-        <div id="status">云端同步中…</div>
+        <h2 style="margin:0;">🎵 和平之后圣乐分享</h2>
+        <p style="font-size:11px; opacity:0.6; margin-top:5px;" id="status">同步中...</p>
     </div>
     <div id="player"></div>
 </div>
 
 <script>
-const CONFIG = {
-    owner: 'echachen',
-    repo: 'my-music',
-    artist: '圣乐合辑',
-    cover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
-};
+    const CONFIG = {
+        owner: 'echachen',
+        repo: 'my-music',
+        artistName: '圣乐合辑',
+        defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
+    };
 
-async function initMusicStation(){
-    const status = document.getElementById('status');
+    async function initMusicStation() {
+        const statusEl = document.getElementById('status');
+        try {
+            const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/`);
+            if (!resp.ok) throw new Error('API Fail');
+            const files = await resp.json();
+            
+            const musicList = files
+                .filter(f => f.name.toLowerCase().endsWith('.mp3'))
+                .map(f => ({
+                    name: f.name.replace(/\.mp3$/i, ''),
+                    artist: CONFIG.artistName,
+                    url: f.name,
+                    cover: CONFIG.defaultCover
+                }));
 
-    try{
-        const api = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/`;
-        const res = await fetch(api);
-        if(!res.ok) throw new Error('GitHub API error');
+            const ap = new APlayer({
+                container: document.getElementById('player'),
+                listFolded: false, 
+                theme: '#e91e63', 
+                order: 'list',
+                audio: musicList
+            });
 
-        const files = await res.json();
-
-        const audioList = files
-            .filter(f => f.name.toLowerCase().endsWith('.mp3') && f.download_url)
-            .map(f => ({
-                name: f.name.replace(/\.mp3$/i,''),
-                artist: CONFIG.artist,
-                url: f.download_url,
-                cover: CONFIG.cover
-            }));
-
-        if(!audioList.length){
-            status.innerText = '未找到可播放的圣乐';
-            return;
+            statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
+        } catch (err) {
+            statusEl.innerText = "同步失败";
         }
-
-        const ap = new APlayer({
-            container: document.getElementById('player'),
-            audio: audioList,
-            listFolded: false,
-            order: 'list',
-            theme: '#e91e63',
-            preload: 'metadata'
-        });
-
-        /* 点歌立即播放 */
-        ap.on('listswitch', () => ap.play());
-
-        status.innerText = `已成功加载 ${audioList.length} 首圣乐`;
-
-    }catch(e){
-        console.error(e);
-        status.innerText = '同步失败';
     }
-}
 
-initMusicStation();
+    initMusicStation();
 </script>
-
 </body>
 </html>
