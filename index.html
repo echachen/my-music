@@ -159,32 +159,10 @@
         /* 1. 歌名信息栏 */
       .aplayer .aplayer-info .aplayer-music .aplayer-author {
           display: none !important; /* 👈 隐藏播放器顶部的歌手名和横线 */
-}
-
-/* 同时也隐藏下方歌曲列表里的歌手名 */
-.aplayer .aplayer-list ol li .aplayer-list-author {
-    display: none !important; /* 👈 隐藏列表右侧的歌手名 */
-}
-        /* 1. 彻底清除父级容器的偏移 */
-.aplayer .aplayer-info {
-    padding: 0 !important;      /* 清除 APlayer 默认给左侧封面留出的内边距 */
-    margin-left: 0 !important;  /* 确保信息区从卡片的最左边开始计算宽度 */
-}
-
-/* 2. 强制标题栏占满 100% 宽度并居中 */
-.aplayer .aplayer-info .aplayer-music {
-    width: 100% !important;     /* 宽度设为 100% */
-    text-align: center !important; /* 文字居中 */
-    margin-left: 0 !important;  /* 清除左外边距 */
-    margin-right: 0 !important; /* 清除右外边距 */
-}
-
-/* 3. 如果你之前调过标题的颜色和大小，确保也在这里 */
-.aplayer .aplayer-info .aplayer-music .aplayer-title {
-    display: block !important;  /* 设为块级元素以更好地居中 */
-    color: #fff !important; 
-    font-size: 1.3rem !important; /* 如果觉得小，可以调大到 1.3rem 或 1.5rem */
-}
+      }
+      .aplayer .aplayer-list ol li .aplayer-list-author {
+          display: none !important; /* 👈 隐藏列表右侧的歌手名 */
+      }
     </style>
 </head>
 <body>
