@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>和平之后圣乐分享</title>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
     <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+
     <style>
         body { 
             margin: 0; 
@@ -31,64 +33,82 @@
             max-width: 500px; 
             background: rgba(255, 255, 255, 0.05); 
             backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px);
-            padding: 20px 15px 45px 15px;
+            padding: 20px 15px 45px;
             border-radius: 25px; 
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); 
         }
 
-        .header { color: white; text-align: center; margin-bottom: 25px; }
-        .header h2 { font-weight: 300; letter-spacing: 1px; font-size: 1.2rem; }
+        .header {
+            color: white;
+            text-align: center;
+            margin-bottom: 25px;
+        }
 
-        /* 👇 新增：顶部当前播放歌曲标题样式 */
-        #current-title {
-            margin-top: 8px;
-            font-size: 16px;
-            font-weight: 500;
-            color: #fff;
+        .header h2 {
+            font-weight: 300;
+            letter-spacing: 1px;
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        #status {
+            font-size: 11px;
+            opacity: 0.6;
+            margin-top: 5px;
         }
 
         #player { border-radius: 15px; overflow: visible !important; }
-        .aplayer { background: transparent !important; box-shadow: none !important; border: none !important; margin: 0 !important; }
-        .aplayer .aplayer-info { background: transparent !important; padding: 0 !important; }
+        .aplayer { background: transparent !important; box-shadow: none !important; border: none !important; }
 
-        /* 👇 修改：隐藏播放器内部自带的歌曲标题 */
+        .aplayer .aplayer-info {
+            background: transparent !important;
+            padding: 0 !important;
+        }
+
         .aplayer .aplayer-info .aplayer-music {
+            margin-bottom: -30px !important;
+            text-align: center;
+        }
+
+        .aplayer .aplayer-info .aplayer-title {
+            color: #fff !important;
+            font-size: 1.1rem !important;
+        }
+
+        .aplayer .aplayer-info .aplayer-author {
             display: none !important;
         }
 
-        .aplayer .aplayer-info, 
+        .aplayer .aplayer-info,
         .aplayer .aplayer-info .aplayer-controller {
             display: flex !important;
-            flex-direction: column-reverse !important; 
-            position: relative !important;
-            border: none !important;
-            box-shadow: none !important;
+            flex-direction: column-reverse !important;
             background: transparent !important;
         }
 
-        .aplayer .aplayer-info .aplayer-controller .aplayer-time {
+        .aplayer .aplayer-time {
             display: flex !important;
-            justify-content: space-around !important; 
-            width: 100% !important;
-            align-items: center !important;
-            padding: 0 5px 20px 5px !important; 
-            border: none !important;
-            background: none !important;
+            justify-content: space-around !important;
+            padding-bottom: 20px !important;
         }
 
-        .aplayer .aplayer-volume {
-            visibility: hidden !important;
-            pointer-events: none !important;
+        .aplayer .aplayer-ptime {
+            color: rgb(31, 58, 138) !important;
+            font-weight: bold;
         }
 
-        .aplayer .aplayer-icon { width: 30px !important; height: 30px !important; }
-        .aplayer .aplayer-icon svg { fill: #fff !important; }
+        .aplayer .aplayer-dtime {
+            color: rgba(255,255,255,0.8) !important;
+        }
+
+        .aplayer .aplayer-icon svg {
+            fill: #f7676b !important;
+        }
 
         .aplayer .aplayer-bar {
-            background: rgba(255,255,255,0.2) !important;
             height: 3px !important;
+            background: rgba(255,255,255,0.2) !important;
         }
 
         .aplayer .aplayer-played {
@@ -105,76 +125,81 @@
         .aplayer .aplayer-list ol li {
             padding: 8px 15px !important;
             color: rgba(255,255,255,0.8) !important;
+            border: none !important;
+        }
+
+        .aplayer .aplayer-list-author {
+            display: none !important;
+        }
+
+        .aplayer .aplayer-pic .aplayer-button {
+            bottom: 12px !important;
+            right: 9px !important;
+            width: 44px !important;
+            height: 44px !important;
+            border-radius: 12px !important;
+            background: rgba(31,58,138,0.9) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .aplayer .aplayer-pic .aplayer-button svg {
+            width: 40px !important;
+            height: 40px !important;
+            fill: #fff !important;
         }
     </style>
 </head>
-<body>
 
+<body>
 <div class="main-card">
     <div class="header">
-        <h2 style="margin:0;">🎵 和平之后圣乐分享</h2>
-
-        <!-- 👇 新增：当前播放歌曲名（自动居中） -->
-        <div id="current-title"></div>
-
-        <p style="font-size:11px; opacity:0.6; margin-top:5px;" id="status">连接中...</p>
+        <h2>🎵 和平之后圣乐分享</h2>
+        <p id="status">连接中...</p>
     </div>
-
     <div id="player"></div>
 </div>
 
 <script>
-    const CONFIG = {
-        owner: 'echachen',
-        repo: 'my-music',
-        artistName: '圣乐合辑',
-        defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
-    };
+const CONFIG = {
+    owner: 'echachen',
+    repo: 'my-music',
+    artistName: '圣乐合辑',
+    defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
+};
 
-    async function initMusicStation() {
-        const statusEl = document.getElementById('status');
-        const titleEl = document.getElementById('current-title');
+async function initMusicStation() {
+    const statusEl = document.getElementById('status');
+    statusEl.innerText = '同步中...';
 
-        statusEl.innerText = '同步中...';
+    try {
+        const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/`);
+        const files = await resp.json();
 
-        try {
-            const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/?t=${Date.now()}`);
-            const files = await resp.json();
+        const musicList = files
+            .filter(f => f.name.endsWith('.mp3'))
+            .map(f => ({
+                name: f.name.replace(/\.mp3$/i, ''),
+                artist: '',
+                url: f.download_url,
+                cover: CONFIG.defaultCover
+            }));
 
-            const musicList = files
-                .filter(f => f.name.toLowerCase().endsWith('.mp3'))
-                .map(f => ({
-                    name: f.name.replace(/\.mp3$/i, ''),
-                    artist: '',
-                    url: f.download_url || f.name,
-                    cover: CONFIG.defaultCover
-                }));
+        new APlayer({
+            container: document.getElementById('player'),
+            listFolded: false,
+            order: 'list',
+            audio: musicList
+        });
 
-            const ap = new APlayer({
-                container: document.getElementById('player'),
-                listFolded: false,
-                theme: '#1f3a8a',
-                order: 'list',
-                audio: musicList
-            });
-
-            // 👇 新增：同步当前播放歌曲标题到 header
-            function updateTitle() {
-                const current = ap.list.audios[ap.list.index];
-                titleEl.textContent = current.name;
-            }
-
-            updateTitle();
-            ap.on('listswitch', updateTitle);
-
-            statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
-        } catch (e) {
-            statusEl.innerText = '同步失败';
-        }
+        statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
+    } catch {
+        statusEl.innerText = '同步失败';
     }
+}
 
-    initMusicStation();
+initMusicStation();
 </script>
-
 </body>
 </html>
