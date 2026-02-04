@@ -34,7 +34,7 @@
             background: rgba(255, 255, 255, 0.05); 
             backdrop-filter: blur(12px); 
             -webkit-backdrop-filter: blur(12px);
-            padding: 25px 15px 75px 15px; 
+            padding: 25px 15px 100px 15px; 
             border-radius: 25px; 
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); 
@@ -50,7 +50,7 @@
 
         /* 1. 歌名信息栏 */
         .aplayer .aplayer-info .aplayer-music {
-            margin-bottom: -30px !important;
+            margin-bottom: -50px !important;
             text-align: center;
             width: 100%;
             border: none !important; 
@@ -146,18 +146,21 @@
             fill: #fff !important; transform: none !important; margin: 0 !important;
         
         /* 仅仅是增加一个动画定义，不影响你原本的布局 */
-.loading-dot {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-radius: 50%;
-    border-top-color: #fff;
-    animation: spin 1s linear infinite;
-    margin-right: 5px;
-    vertical-align: middle;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+        .loading-dot {
+           display: inline-block;
+           width: 10px;
+           height: 10px;
+           border: 2px solid rgba(255,255,255,0.3);
+           border-radius: 50%;
+           border-top-color: #fff;
+           animation: spin 1s linear infinite;
+           margin-right: 5px;
+           vertical-align: middle;
+        }
+         @keyframes spin { to { transform: rotate(360deg); } }
+       .aplayer .aplayer-list {
+           max-height: 310px !important; /* 默认通常是 250px，改为 310px 大约能多显示 2 首 */
+        }
     </style>
 </head>
 <body>
