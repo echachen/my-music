@@ -138,6 +138,31 @@
             width: 40px !important; height: 40px !important; 
             fill: #fff !important; transform: none !important; margin: 0 !important;
         }
+    .aplayer .aplayer-info .aplayer-controller .aplayer-time {
+        display: flex !important; /* 强制显示 */
+        position: absolute !important; /* 使用绝对定位 */
+        bottom: 45px !important; /* 向上移动，确保在进度条上方可见 */
+        right: 10px !important; /* 靠右对齐 */
+        font-size: 13px !important; 
+        z-index: 10;
+    }
+
+    /* 2. 设置当前时间颜色（玫红） */
+    .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-ptime {
+        color: rgba(233, 30, 99, 1) !important; /* */
+        font-weight: bold !important;
+    }
+
+    /* 3. 设置总时长颜色（浅白/灰色，适合你的蓝色背景） */
+    .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-dtime {
+        color: #eee !important; 
+        margin-left: 5px;
+    }
+
+    /* 4. 隐藏不需要的分隔符（可选，让界面更清爽） */
+    .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner span.aplayer-slash {
+        color: #eee !important;
+    }
 </style>
 </head>
 <body>
