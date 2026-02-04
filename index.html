@@ -48,66 +48,67 @@
         .aplayer { background: transparent !important; box-shadow: none !important; border: none !important; margin: 0 !important; }
         .aplayer .aplayer-info { background: transparent !important; padding: 0 !important; }
 
-     /* 1. 歌名信息栏：设置颜色并移除底边线 */
+        /* 1. 歌名信息栏 */
         .aplayer .aplayer-info .aplayer-music {
-         margin-bottom: -30px !important;
-         text-align: center;
-         width: 100%;
-         border: none !important; /* 关键：移除可能存在的底边白线 */
+            margin-bottom: -30px !important;
+            text-align: center;
+            width: 100%;
+            border: none !important; 
         }
-       .aplayer .aplayer-info .aplayer-music .aplayer-title { color: #fff !important; font-size: 1.1rem !important; }
-       .aplayer .aplayer-info .aplayer-music .aplayer-author { color: rgba(255, 255, 255, 0.7) !important; }
+        .aplayer .aplayer-info .aplayer-music .aplayer-title { color: #fff !important; font-size: 1.1rem !important; }
+        .aplayer .aplayer-info .aplayer-music .aplayer-author { color: rgba(255, 255, 255, 0.7) !important; }
 
-       /* 2. 控制区域：按钮在上逻辑 + 彻底抹除所有边框线 */
-       .aplayer .aplayer-info, 
-       .aplayer .aplayer-info .aplayer-controller {
-           display: flex !important;
-           flex-direction: column-reverse !important; 
-           position: relative !important;
-    /* 核心修复：把上下左右所有可能的边框全部变透明 */
-           border: none !important;
-           border-top: none !important;
-           border-bottom: none !important;
-           box-shadow: none !important;
-           background: transparent !important;
-           }
-        /* --- 核心修复：移除按钮背景的所有白线 --- */
+        /* 2. 控制区域布局 */
+        .aplayer .aplayer-info, 
+        .aplayer .aplayer-info .aplayer-controller {
+            display: flex !important;
+            flex-direction: column-reverse !important; 
+            position: relative !important;
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+
+        /* 3. 按钮与时间容器 */
         .aplayer .aplayer-info .aplayer-controller .aplayer-time {
             display: flex !important;
             justify-content: space-around !important; 
-            gap: 10px !important;
-            padding: 0 5px 20px 5px !important; 
             width: 100% !important;
             align-items: center !important;
-            border: none !important;     /* 彻底移除背景线 */
-            background: none !important; /* 彻底移除背景颜色 */
-            outline: none !important;
+            padding: 0 5px 20px 5px !important; 
+            border: none !important;
+            background: none !important;
         }
-        .aplayer .aplayer-list ol li {
-            border: none !important; 
-            color: rgba(255, 255, 255, 0.8) !important;
-            padding: 12px 15px !important;
-    
-    /* --- 在这里手动加上下面这一行 --- */
-           font-size: 15px !important;  /* 数字越大，列表里的字就越大 */
-       }
+
+        /* 时间显示：圣母蓝配色 */
+        .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner {
+            display: inline !important; 
+            color: #fff !important;
+            font-size: 13px !important;
+        }
+        .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-ptime {
+            color: rgb(31, 58, 138) !important; /* 当前时间：圣母蓝 */
+            font-weight: bold;
+        }
+        .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-dtime {
+            color: rgba(255, 255, 255, 0.8) !important; 
+        }
 
         /* 功能图标纯净化 */
         .aplayer .aplayer-icon { width: 30px !important; height: 30px !important; opacity: 0.95 !important; }
         .aplayer .aplayer-icon svg { width: 100% !important; height: 100% !important; fill: #fff !important; }
-        .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner { display: none !important; }
 
-        /* 进度条：未播放部分设为全透明 */
+        /* 进度条样式：圣母蓝配色 */
         .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap { padding: 5px 0 !important; margin: 0 !important; }
         .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar {
-            background: transparent !important; /* 轨道设为透明 */
+            background: rgba(255, 255, 255, 0.2) !important;
             height: 3px !important;
         }
         .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played {
-            background: rgba(233, 30, 99, 1) !important; /* 已播放部分显示玫红 */
+            background: rgb(31, 58, 138) !important; /* 已播放进度：圣母蓝 */
         }
 
-        /* 歌曲目录：下移并移除所有分割线 */
+        /* 歌曲目录样式 */
         .aplayer .aplayer-list {
             background: transparent !important;
             margin-top: 50px !important; 
@@ -116,27 +117,31 @@
         .aplayer .aplayer-list ol li {
             border: none !important; 
             color: rgba(255, 255, 255, 0.8) !important;
-            padding: 12px 15px !important;
+            padding: 8px 15px !important;
+            font-size: 15px !important; 
         }
         .aplayer .aplayer-list ol li:hover { background: rgba(255, 255, 255, 0.1) !important; }
         .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(255, 255, 255, 0.15) !important; }
-        .aplayer .aplayer-list ol li .aplayer-list-cur { background: rgba(233, 30, 99, 1) !important; }
+        .aplayer .aplayer-list ol li .aplayer-list-cur { background: rgb(31, 58, 138) !important; }
 
-        /* 播放/暂停按钮：玫红配色与居中 */
+        /* 播放/暂停按钮：圣母蓝配色 */
         .aplayer .aplayer-pic .aplayer-button {
             top: auto !important; left: auto !important; margin: 0 !important;
-            bottom: 12px !important; right: 10px !important;
+            bottom: 12px !important; right: 9px !important;
             width: 44px !important; height: 44px !important;
             border-radius: 12px !important;
-            background: rgba(233, 30, 99, 0.9) !important; 
-            border: none !important;
+            background: rgba(31, 58, 138, 0.9) !important; /* 按钮背景：圣母蓝 */
             backdrop-filter: blur(5px);
-            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4) !important;
+            box-shadow: 0 4px 15px rgba(31, 58, 138, 0.4) !important;
             display: flex !important; justify-content: center !important; align-items: center !important;
         }
         .aplayer .aplayer-pic .aplayer-button svg { 
             width: 40px !important; height: 40px !important; 
             fill: #fff !important; transform: none !important; margin: 0 !important;
+        }
+        /* ===== 彻底移除音量按钮（不影响其它控件） ===== */
+        .aplayer .aplayer-volume {
+            display: none !important;
         }
     </style>
 </head>
@@ -177,8 +182,9 @@
             const ap = new APlayer({
                 container: document.getElementById('player'),
                 listFolded: false, 
-                theme: '#e91e63', 
+                theme: '#1f3a8a', /* 这里的十六进制代码对应 rgb(31, 58, 138) */
                 order: 'list',
+                volumeShow: false,
                 audio: musicList
             });
 
@@ -187,7 +193,6 @@
             statusEl.innerText = "同步失败";
         }
     }
-
     initMusicStation();
 </script>
 </body>
