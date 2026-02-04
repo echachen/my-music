@@ -163,15 +163,24 @@
       .aplayer .aplayer-list ol li .aplayer-list-author {
           display: none !important; /* 👈 隐藏列表右侧的歌手名 */
       }
+        /* 隐藏播放器内部的歌曲标题 */
+.aplayer .aplayer-info .aplayer-music {
+    display: none !important;
+}
+
     </style>
 </head>
 <body>
 
 <div class="main-card">
-    <div class="header">
-        <h2 style="margin:0;">🎵 和平之后圣乐分享</h2>
-        <p style="font-size:11px; opacity:0.6; margin-top:5px;" id="status">连接中...</p>
+<div class="header">
+    <h2 style="margin:0;">🎵 和平之后圣乐分享</h2>
+    <div id="current-title" style="margin-top:8px; font-size:16px; font-weight:500; color:#fff;">
+        <!-- 当前歌曲名 -->
     </div>
+    <p style="font-size:11px; opacity:0.6; margin-top:5px;" id="status">连接中...</p>
+</div>
+
     <div id="player"></div>
 </div>
 
@@ -201,6 +210,25 @@
                     url: f.download_url || f.name, // 使用 download_url 更稳定
                     cover: CONFIG.defaultCover
                 }));
+
+            const ap = new APlayer({
+    container: document.getElementById('player'),
+    listFolded: false,
+    theme: '#1f3a8a',
+    order: 'list',
+    audio: musicList
+});
+
+// 👇 新增：同步当前歌曲标题
+const titleEl = document.getElementById('current-title');
+
+function updateTitle() {
+    const current = ap.list.audios[ap.list.index];
+    titleEl.textContent = current.name;
+}
+
+updateTitle();
+ap.on('listswitch', updateTitle);
 
             const ap = new APlayer({
                 container: document.getElementById('player'),
