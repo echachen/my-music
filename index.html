@@ -163,29 +163,6 @@
       .aplayer .aplayer-list ol li .aplayer-list-author {
           display: none !important; /* 👈 隐藏列表右侧的歌手名 */
       }
-/* 1. 彻底清除父级容器的偏移 */
-.aplayer .aplayer-info {
-    padding: 0 !important;      
-    margin-left: 0 !important;  
-}
-
-/* 2. 强制标题栏水平居中 */
-.aplayer .aplayer-info .aplayer-music {
-    width: 100% !important;     
-    text-align: center !important; 
-    /* 修正点：将之前的 -100 改为 0，并确保没有左右边距干扰 */
-    margin: 0 !important;       
-    padding: 0 !important;
-}
-
-/* 3. 标题文字微调 */
-.aplayer .aplayer-info .aplayer-music .aplayer-title {
-    display: block !important;  
-    color: #fff !important;  
-    font-size: 1.1rem !important; 
-    /* 如果标题还是偏右，可能是因为右侧有隐藏图标占位，强制清除： */
-    padding-right: 0 !important; 
-}
     </style>
 </head>
 <body>
