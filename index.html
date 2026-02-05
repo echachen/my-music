@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,45 +7,165 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shikwasa/dist/shikwasa.min.css">
     <script src="https://cdn.jsdelivr.net/npm/shikwasa/dist/shikwasa.min.js"></script>
     <style>
-        body { margin: 0; background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); background-size: 400% 400%; animation: gradient 15s ease infinite; font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: flex-start; padding-top: 20px; min-height: 100vh; }
-        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .main-card { width: 95%; max-width: 500px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 30px 20px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); }
+        /* 1. 动态渐变背景 & 基础样式 */
+        body { 
+            margin: 0; 
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            display: flex; justify-content: center; align-items: flex-start; 
+            padding-top: 20px; min-height: 100vh; 
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 2. 磨砂玻璃主卡片 */
+        .main-card { 
+            width: 95%; max-width: 500px; 
+            background: rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 30px 20px; border-radius: 30px; 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); 
+        }
+
         .header { color: white; text-align: center; margin-bottom: 25px; }
-        .playlist-container { margin-top: 100px; max-height: 380px; overflow-y: auto; }
-        .music-item { padding: 12px 15px; margin-bottom: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; color: rgba(255, 255, 255, 0.9); cursor: pointer; transition: 0.3s; }
-        .music-item.active { background: rgba(31, 58, 138, 0.6); border-left: 4px solid #fff; }
-        #status { font-size: 11px; opacity: 0.6; margin-top: 10px; text-align: center; color: white; }
+        .header h2 { font-weight: 300; font-size: 1.3rem; margin: 0; letter-spacing: 1px; }
+
+        /* 3. 播放器容器间距控制 */
+        #player { margin-bottom: 20px; }
+
+        /* 4. 曲库列表容器 */
+        .playlist-container {
+            margin-top: 80px; /* 👈 调整标题与列表的间距 */
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+            /* 滚动条美化 */
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.2) transparent;
+        }
+
+        /* 5. 歌曲条目样式 */
+        .music-item {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .music-item:hover { background: rgba(255, 255, 255, 0.15); }
+        .music-item.active { 
+            background: rgba(31, 58, 138, 0.7); 
+            border-left: 5px solid #fff; 
+            padding-left: 10px;
+            font-weight: bold;
+        }
+
+        #status { font-size: 11px; opacity: 0.7; margin-top: 10px; text-align: center; color: white; }
     </style>
 </head>
 <body>
+
 <div class="main-card">
-    <div class="header"><h2>🎵 和平之后圣乐分享</h2><p id="status">正在同步曲库...</p></div>
+    <div class="header">
+        <h2>🎵 和平之后圣乐分享</h2>
+        <p id="status">正在同步最新曲库...</p>
+    </div>
+
     <div id="player"></div>
+
     <div class="playlist-container" id="playlist"></div>
 </div>
+
 <script>
-    const CONFIG = { jsonUrl: './songlist.json?v=' + new Date().getTime() }; // ✅ 访问你刚生成的 JSON
-    let player = null, musicData = [];
+    // 👈 配置你的 JSON 地址（加上时间戳防止浏览器缓存）
+    const CONFIG = {
+        jsonUrl: 'https://echachen.github.io/my-music/songlist.json?v=' + new Date().getTime()
+    };
 
-    async function init() {
+    let player = null;
+    let musicData = [];
+    let currentIndex = 0;
+
+    async function initMusicStation() {
+        const statusEl = document.getElementById('status');
+        const playlistEl = document.getElementById('playlist');
+
         try {
+            // 1. 获取生成的静态歌单文件
             const resp = await fetch(CONFIG.jsonUrl);
-            if (!resp.ok) throw new Error();
-            musicData = await resp.json();
+            if (!resp.ok) throw new Error('无法连接到曲库文件');
             
-            player = new Shikwasa({ container: document.getElementById('player'), audio: musicData[0], themeColor: '#1f3a8a' });
-            document.getElementById('playlist').innerHTML = musicData.map((s, i) => `<div class="music-item ${i===0?'active':''}" onclick="playSong(${i})">${s.title}</div>`).join('');
-            document.getElementById('status').innerText = `已加载 ${musicData.length} 首歌曲`;
-        } catch (e) { document.getElementById('status').innerText = "加载失败，请刷新页面"; }
+            musicData = await resp.json();
+            if (musicData.length === 0) throw new Error('曲库目前是空的');
+
+            // 2. 初始化 Shikwasa 播放器
+            player = new Shikwasa({
+                container: document.getElementById('player'),
+                audio: musicData[0],
+                themeColor: '#1f3a8a' // 圣母蓝主题
+            });
+
+            // 3. 渲染列表
+            renderPlaylist();
+
+            // 4. 监听播放结束，自动下一首
+            player.on('ended', () => {
+                if (currentIndex < musicData.length - 1) {
+                    playSong(currentIndex + 1);
+                }
+            });
+
+            statusEl.innerText = `已成功同步 ${musicData.length} 首云端歌曲`;
+
+        } catch (err) {
+            console.error(err);
+            statusEl.innerText = "加载失败，请检查 songlist.json 是否存在";
+        }
     }
 
-    function playSong(i) {
-        player.update({ audio: musicData[i] }); player.play();
-        const items = document.querySelectorAll('.music-item');
-        items.forEach(it => it.classList.remove('active')); items[i].classList.add('active');
-        items[i].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    function renderPlaylist() {
+        const playlistEl = document.getElementById('playlist');
+        playlistEl.innerHTML = musicData.map((song, index) => `
+            <div class="music-item ${index === 0 ? 'active' : ''}" onclick="playSong(${index})">
+                ${song.title}
+            </div>
+        `).join('');
     }
-    init();
+
+    function playSong(index) {
+        if (index === currentIndex && player.playing) return;
+
+        currentIndex = index;
+        
+        // 更新播放器音频源
+        player.update({ audio: musicData[index] });
+        player.play();
+
+        // 更新列表高亮状态
+        const items = document.querySelectorAll('.music-item');
+        items.forEach(it => it.classList.remove('active'));
+        items[index].classList.add('active');
+
+        // 自动将正在播放的歌曲滚动到视野内
+        items[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+        document.getElementById('status').innerText = "当前播放: " + musicData[index].title;
+    }
+
+    // 启动项目
+    initMusicStation();
 </script>
 </body>
 </html>
