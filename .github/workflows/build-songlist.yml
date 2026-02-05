@@ -4,13 +4,12 @@ on:
   push:
     paths:
       - "*.mp3"
-      - ".github/workflows/**" # 方便调试
-  workflow_dispatch: # 👈 增加手动触发按钮，不用每次都传 MP3 也能测试
+  workflow_dispatch: # 👈 允许你在 GitHub 页面点按钮运行
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions: # 👈 关键：赋予 Action 写入文件的权限
+    permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
@@ -18,23 +17,22 @@ jobs:
       - name: Generate songlist.json
         run: |
           echo "[" > songlist.json
-          first=true
-          # 扫描当前目录下所有 mp3
-          for f in *.mp3; do
+          # 扫描所有 mp3 文件
+          files=(*.mp3)
+          count=${#files[@]}
+          for ((i=0; i<$count; i++)); do
+            f="${files[$i]}"
             [ -e "$f" ] || continue
-            filename=$(basename "$f")
-            title="${filename%.mp3}"
-
-            esc_title=$(printf '%s' "$title" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().strip(), ensure_ascii=False)[1:-1])')
-            esc_file=$(printf '%s' "$f" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().strip(), ensure_ascii=False)[1:-1])')
-
-            if [ "$first" = true ]; then
-              first=false
-            else
+            title="${f%.mp3}"
+            
+            # 使用 Python 确保中文直接显示，且格式百分百正确
+            item=$(python3 -c "import json; print(json.dumps({'title': '$title', 'src': 'https://echachen.github.io/my-music/$f'}, ensure_ascii=False))")
+            
+            echo "  $item" >> songlist.json
+            # 如果不是最后一个，就加逗号
+            if [ $i -lt $((count-1)) ]; then
               echo "," >> songlist.json
             fi
-            # 这里的链接不要写死 CDN，方便后续调试
-            echo "  { \"title\": \"$esc_title\", \"src\": \"https://echachen.github.io/my-music/$esc_file\" }" >> songlist.json
           done
           echo "]" >> songlist.json
 
@@ -44,4 +42,4 @@ jobs:
           git config user.email "actions@github.com"
           git add songlist.json
           git commit -m "Auto update songlist.json" || exit 0
-          git push origin main  # 👈 确保这里写对你的分支名（通常是 main 或 master）
+          git push origin main
