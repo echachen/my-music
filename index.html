@@ -1,58 +1,84 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>和平之后圣乐分享</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shikwasa/dist/shikwasa.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/shikwasa/dist/shikwasa.min.js"></script>
-    <style>
-        body { 
-            margin: 0; background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%; animation: gradient 15s ease infinite;
-            font-family: 'Segoe UI', system-ui, sans-serif; display: flex; 
-            justify-content: center; align-items: flex-start; padding-top: 20px; min-height: 100vh; 
-        }
-        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>和平之后圣乐分享</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shikwasa/dist/shikwasa.min.css">
+<script src="https://cdn.jsdelivr.net/npm/shikwasa/dist/shikwasa.min.js"></script>
+<style>
+body { 
+    margin: 0; 
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%; 
+    animation: gradient 15s ease infinite;
+    font-family: 'Segoe UI', system-ui, sans-serif; 
+    display: flex; 
+    justify-content: center; 
+    align-items: flex-start; 
+    padding-top: 20px; 
+    min-height: 100vh; 
+}
+@keyframes gradient { 
+    0% { background-position: 0% 50%; } 
+    50% { background-position: 100% 50%; } 
+    100% { background-position: 0% 50%; } 
+}
 
-        .main-card { 
-            width: 95%; max-width: 500px; background: rgba(255, 255, 255, 0.1); 
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            padding: 30px 20px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); 
-        }
+.main-card { 
+    width: 95%; max-width: 500px; 
+    background: rgba(255, 255, 255, 0.1); 
+    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    padding: 30px 20px; border-radius: 30px; 
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); 
+}
 
-        .header { color: white; text-align: center; margin-bottom: 25px; }
-        
-        .playlist-container {
-            margin-top: 100px;
-            max-height: 380px; overflow-y: auto;
-        }
+.header { color: white; text-align: center; margin-bottom: 25px; }
 
-        .music-item {
-            padding: 12px 15px; margin-bottom: 8px; background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px; color: rgba(255, 255, 255, 0.9); cursor: pointer; transition: all 0.3s;
-        }
-        .music-item.active { background: rgba(31, 58, 138, 0.6); border-left: 4px solid #fff; }
+.playlist-container {
+    margin-top: 100px; 
+    max-height: 380px; overflow-y: auto;
+}
 
-        #status { font-size: 11px; opacity: 0.6; margin-top: 10px; text-align: center; color: white; }
-    </style>
+.music-item {
+    padding: 12px 15px; margin-bottom: 8px; 
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px; color: rgba(255, 255, 255, 0.9); 
+    cursor: pointer; transition: all 0.3s;
+}
+.music-item.active { 
+    background: rgba(31, 58, 138, 0.6); 
+    border-left: 4px solid #fff; 
+}
+
+#status { 
+    font-size: 11px; opacity: 0.6; margin-top: 10px; 
+    text-align: center; color: white; 
+}
+</style>
 </head>
 <body>
 <div class="main-card">
-    <div class="header"><h2>🎵 和平之后圣乐分享</h2><p id="status">同步中...</p></div>
+    <div class="header">
+        <h2>🎵 和平之后圣乐分享</h2>
+        <p id="status">加载中...</p>
+    </div>
     <div id="player"></div>
     <div class="playlist-container" id="playlist"></div>
 </div>
 
 <script>
-const CONFIG = { owner: 'echachen', repo: 'my-music', cover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Music' };
+const CONFIG = {
+    jsonUrl: 'https://cdn.jsdelivr.net/gh/echachen/my-music/songlist.json'
+};
+
 let player = null, musicData = [], currentIndex = 0;
 
 async function init() {
     try {
-        // ✅ 使用 songlist.json，避免直接 GitHub API hit limit
-        const resp = await fetch('songlist.json');
+        // 从 jsDelivr 加载 songlist.json
+        const resp = await fetch(CONFIG.jsonUrl);
         musicData = await resp.json();
 
         if (!musicData.length) {
@@ -61,29 +87,42 @@ async function init() {
         }
 
         // 初始化播放器，只初始化一次
-        player = new Shikwasa({ container: document.getElementById('player'), audio: musicData[0], themeColor: '#1f3a8a' });
+        player = new Shikwasa({ 
+            container: document.getElementById('player'), 
+            audio: musicData[0], 
+            themeColor: '#1f3a8a' 
+        });
 
         // 渲染曲目列表
         const playlistEl = document.getElementById('playlist');
-        playlistEl.innerHTML = musicData.map((s, i) => `<div class="music-item ${i===0?'active':''}" onclick="playSong(${i})">${s.title}</div>`).join('');
+        playlistEl.innerHTML = musicData.map((s, i) => 
+            `<div class="music-item ${i===0?'active':''}" onclick="playSong(${i})">${s.title}</div>`
+        ).join('');
 
         document.getElementById('status').innerText = `已加载 ${musicData.length} 首歌曲`;
+
+        // 设置自动播放下一首
+        player.audio.addEventListener('ended', () => {
+            if (currentIndex + 1 < musicData.length) {
+                playSong(currentIndex + 1);
+            }
+        });
+
     } catch (e) {
         console.error(e);
         document.getElementById('status').innerText = "加载 songlist.json 出错";
     }
 }
 
-// 播放函数
+// 播放指定歌曲
 function playSong(i) {
     if (i === currentIndex) return; // 点击同一首不重建
     currentIndex = i;
 
-    // 只切换 audio src
-    player.audio.src = musicData[i].src;
+    player.audio.src = musicData[i].src; // 切换音频
     player.play();
 
-    // 外置标题显示
+    // 更新顶部标题
     document.getElementById('status').innerText = "当前播放: " + musicData[i].title;
 
     // 高亮当前播放
@@ -91,20 +130,11 @@ function playSong(i) {
     items.forEach(it => it.classList.remove('active'));
     items[i].classList.add('active');
 
-    // 滚动条平滑跟随
+    // 滚动列表平滑跟随
     items[i].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-// 自动播放下一首
-function setupAutoNext() {
-    player.audio.addEventListener('ended', () => {
-        if (currentIndex + 1 < musicData.length) {
-            playSong(currentIndex + 1);
-        }
-    });
-}
-
-init().then(setupAutoNext);
+init();
 </script>
 </body>
 </html>
