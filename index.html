@@ -129,7 +129,7 @@
             max-height: 350px !important; /* 多显示歌曲 */
         }
         .aplayer .aplayer-info {
-            margin-bottom: 35px !important; 
+            margin-bottom: 50px !important; 
         }
         .aplayer .aplayer-list ol li {
             border: none !important; 
@@ -195,8 +195,7 @@
         statusEl.innerHTML = '<span class="loading-dot"></span>同步中...';
 
         try {
-            // ✅ 使用时间戳 ?t= 防止 GitHub 缓存
-            const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/?t=${new Date().getTime()}`);
+            const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/`);
             if (!resp.ok) throw new Error('API Fail');
             const files = await resp.json();
             
