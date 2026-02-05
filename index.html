@@ -1,142 +1,222 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>和平之后圣乐分享</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
-    <style>
-        body { 
-            margin: 0; 
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: flex-start; 
-            padding-top: 20px; 
-            min-height: 100vh; 
-        }
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .main-card { 
-            width: 95%; 
-            max-width: 500px; 
-            background: rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px);
-            padding: 20px 15px 75px 15px; /* 已恢复为你需要的底部加长 */
-            border-radius: 25px; 
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); 
-        }
-        .header { color: white; text-align: center; margin-bottom: 25px; }
-        .header h2 { font-weight: 300; letter-spacing: 1px; font-size: 1.2rem; }
-        #player { border-radius: 15px; overflow: visible !important; }
-        .aplayer { background: transparent !important; box-shadow: none !important; border: none !important; margin: 0 !important; }
-        
-        /* ✨ 居中修复核心：清除 APlayer 信息栏的所有默认偏移 */
-        .aplayer .aplayer-info { 
-            background: transparent !important; 
-            padding: 0 !important; 
-            margin: 0 !important;
-        }
-        .aplayer .aplayer-info .aplayer-music {
-            margin-bottom: -30px !important;
-            text-align: center !important;
-            width: 100% !important;
-            padding: 0 !important;
-            border: none !important; 
-        }
-        .aplayer .aplayer-info .aplayer-music .aplayer-title { 
-            color: #fff !important; 
-            font-size: 1.2rem !important; 
-            display: block !important;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>和平之后圣乐分享</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+    <style>
+        /* 动态渐变背景 */
+        body { 
+            margin: 0; 
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; 
+            padding-top: 20px; /* 已按要求向上移动 20px */
+            min-height: 100vh; 
+        }
 
-        /* 隐藏歌手名 */
-        .aplayer .aplayer-info .aplayer-music .aplayer-author,
-        .aplayer .aplayer-list ol li .aplayer-list-author { display: none !important; }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-        .aplayer .aplayer-info, .aplayer .aplayer-info .aplayer-controller {
-            display: flex !important;
-            flex-direction: column-reverse !important; 
-            position: relative !important;
-            border: none !important;
-            background: transparent !important;
-        }
-        .aplayer .aplayer-info .aplayer-controller .aplayer-time {
-            display: flex !important;
-            justify-content: space-around !important; 
-            width: 100% !important;
-            align-items: center !important;
-            padding: 0 5px 20px 5px !important; 
-        }
-        .aplayer .aplayer-volume { visibility: hidden !important; pointer-events: none !important; }
-        .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner { display: inline !important; color: #fff !important; font-size: 13px !important; }
-        .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-ptime { color: rgb(31, 58, 138) !important; font-weight: bold; }
-        .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-dtime { color: rgba(255, 255, 255, 0.8) !important; }
-        .aplayer .aplayer-icon { width: 30px !important; height: 30px !important; opacity: 0.95 !important; }
-        .aplayer .aplayer-icon svg { width: 100% !important; height: 100% !important; fill: #fff !important; }
-        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap { padding: 5px 0 !important; margin: 0 !important; }
-        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar { background: rgba(255, 255, 255, 0.2) !important; height: 3px !important; }
-        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played { background: rgb(31, 58, 138) !important; }
-        .aplayer .aplayer-list { background: transparent !important; margin-top: 60px !important; border: none !important; max-height: 350px !important; }
-        .aplayer .aplayer-list ol li { border: none !important; color: rgba(255, 255, 255, 0.8) !important; padding: 8px 15px !important; font-size: 15px !important; }
-        .aplayer .aplayer-list ol li:hover { background: rgba(255, 255, 255, 0.1) !important; }
-        .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(255, 255, 255, 0.15) !important; }
-        .aplayer .aplayer-list ol li .aplayer-list-cur { background: rgb(31, 58, 138) !important; }
-        .aplayer .aplayer-pic .aplayer-button {
-            top: auto !important; left: auto !important; margin: 0 !important;
-            bottom: 12px !important; right: 9px !important;
-            width: 44px !important; height: 44px !important;
-            border-radius: 12px !important;
-            background: rgba(31, 58, 138, 0.9) !important; 
-            backdrop-filter: blur(5px);
-            box-shadow: 0 4px 15px rgba(31, 58, 138, 0.4) !important;
-            display: flex !important; justify-content: center !important; align-items: center !important;
-        }
-        .aplayer .aplayer-pic .aplayer-button svg { width: 40px !important; height: 40px !important; fill: #fff !important; transform: none !important; margin: 0 !important; }
-        .loading-dot { display: inline-block; width: 10px; height: 10px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s linear infinite; margin-right: 5px; vertical-align: middle; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
+        /* 极简透明卡片 */
+        .main-card { 
+            width: 95%; 
+            max-width: 500px; 
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            padding: 20px 15px 45px 15px; /* 底部已加长 50px */
+            border-radius: 25px; 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); 
+        }
+
+        .header { color: white; text-align: center; margin-bottom: 25px; }
+        .header h2 { font-weight: 300; letter-spacing: 1px; font-size: 1.2rem; }
+
+        /* APlayer 核心布局 */
+        #player { border-radius: 15px; overflow: visible !important; }
+        .aplayer { background: transparent !important; box-shadow: none !important; border: none !important; margin: 0 !important; }
+        .aplayer .aplayer-info { background: transparent !important; padding: 0 !important; }
+
+        .aplayer .aplayer-info .aplayer-music {
+            margin-bottom: -30px !important;
+            text-align: center;
+            width: 100%;
+            border: none !important; 
+        }
+        .aplayer .aplayer-info .aplayer-music .aplayer-title { color: #fff !important; font-size: 1.1rem !important; }
+        .aplayer .aplayer-info .aplayer-music .aplayer-author { color: rgba(255, 255, 255, 0.7) !important; }
+
+        .aplayer .aplayer-info, 
+        .aplayer .aplayer-info .aplayer-controller {
+            display: flex !important;
+            flex-direction: column-reverse !important; 
+            position: relative !important;
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+
+        .aplayer .aplayer-info .aplayer-controller .aplayer-time {
+            display: flex !important;
+            justify-content: space-around !important; 
+            width: 100% !important;
+            align-items: center !important;
+            padding: 0 5px 20px 5px !important; 
+            border: none !important;
+            background: none !important;
+        }
+
+        /* 隐藏音量键 */
+        .aplayer .aplayer-volume {
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+
+        /* 时间显示 */
+        .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner {
+            display: inline !important; 
+            color: #fff !important;
+            font-size: 13px !important;
+        }
+        .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-ptime {
+            color: rgb(31, 58, 138) !important; 
+            font-weight: bold;
+        }
+        .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-dtime {
+            color: rgba(255, 255, 255, 0.8) !important; 
+        }
+
+        .aplayer .aplayer-icon { width: 30px !important; height: 30px !important; opacity: 0.95 !important; }
+        .aplayer .aplayer-icon svg { width: 100% !important; height: 100% !important; fill: #fff !important; }
+
+        /* 进度条样式 */
+        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap { padding: 5px 0 !important; margin: 0 !important; }
+        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar {
+            background: rgba(255, 255, 255, 0.2) !important;
+            height: 3px !important;
+        }
+        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played {
+            background: rgb(31, 58, 138) !important; 
+        }
+
+        /* 歌曲目录：已增加最大高度以多显示歌曲 */
+        .aplayer .aplayer-list {
+            background: transparent !important;
+            margin-top: 60px !important; 
+            border: none !important; 
+            max-height: 350px !important; /* 👈 这里让列表变长 */
+        }
+        .aplayer .aplayer-list ol li {
+            border: none !important; 
+            color: rgba(255, 255, 255, 0.8) !important;
+            padding: 8px 15px !important;
+            font-size: 15px !important; 
+        }
+        .aplayer .aplayer-list ol li:hover { background: rgba(255, 255, 255, 0.1) !important; }
+        .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(255, 255, 255, 0.15) !important; }
+        .aplayer .aplayer-list ol li .aplayer-list-cur { background: rgb(31, 58, 138) !important; }
+
+        /* 播放/暂停按钮 */
+        .aplayer .aplayer-pic .aplayer-button {
+            top: auto !important; left: auto !important; margin: 0 !important;
+            bottom: 12px !important; right: 9px !important;
+            width: 44px !important; height: 44px !important;
+            border-radius: 12px !important;
+            background: rgba(31, 58, 138, 0.9) !important; 
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(31, 58, 138, 0.4) !important;
+            display: flex !important; justify-content: center !important; align-items: center !important;
+        }
+        .aplayer .aplayer-pic .aplayer-button svg { 
+            width: 40px !important; height: 40px !important; 
+            fill: #fff !important; transform: none !important; margin: 0 !important;
+        } /* 👈 修复：补齐了这里的大括号 */
+
+        /* 加载动画定义 */
+        .loading-dot {
+           display: inline-block;
+           width: 10px;
+           height: 10px;
+           border: 2px solid rgba(255,255,255,0.3);
+           border-radius: 50%;
+           border-top-color: #fff;
+           animation: spin 1s linear infinite;
+           margin-right: 5px;
+           vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        /* 1. 歌名信息栏 */
+      .aplayer .aplayer-info .aplayer-music .aplayer-author {
+          display: none !important; /* 👈 隐藏播放器顶部的歌手名和横线 */
+      }
+      .aplayer .aplayer-list ol li .aplayer-list-author {
+          display: none !important; /* 👈 隐藏列表右侧的歌手名 */
+      }
+    </style>
 </head>
 <body>
-<div class="main-card">
-    <div class="header">
-        <h2 style="margin:0;">🎵 和平之后圣乐分享</h2>
-        <p style="font-size:11px; opacity:0.6; margin-top:5px;" id="status">连接中...</p>
-    </div>
-    <div id="player"></div>
-</div>
-<script>
-    const CONFIG = { owner: 'echachen', repo: 'my-music', defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music' };
 
-    async function initMusicStation() {
-        const statusEl = document.getElementById('status');
-        statusEl.innerHTML = '<span class="loading-dot"></span>同步中...';
-        try {
-            const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/?t=${new Date().getTime()}`);
-            if (!resp.ok) throw new Error('API Fail');
-            const files = await resp.json();
-            const musicList = files
-                .filter(f => f.name.toLowerCase().endsWith('.mp3'))
-                .map(f => ({
-                    name: f.name.replace(/\.mp3$/i, ''),
-                    artist: '', 
-                    url: f.download_url || f.name,
-                    cover: CONFIG.defaultCover
-                }));
-            new APlayer({ container: document.getElementById('player'), listFolded: false, theme: '#1f3a8a', order: 'list', audio: musicList });
-            statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
-        } catch (err) { statusEl.innerText = "同步失败，请检查网络"; }
-    }
-    initMusicStation();
+<div class="main-card">
+    <div class="header">
+        <h2 style="margin:0;">🎵 和平之后圣乐分享</h2>
+        <p style="font-size:11px; opacity:0.6; margin-top:5px;" id="status">连接中...</p>
+    </div>
+    <div id="player"></div>
+</div>
+
+<script>
+    const CONFIG = {
+        owner: 'echachen',
+        repo: 'my-music',
+        artistName: '圣乐合辑',
+        defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
+    };
+
+    async function initMusicStation() {
+        const statusEl = document.getElementById('status');
+        // 一开始就显示转圈圈
+        statusEl.innerHTML = '<span class="loading-dot"></span>同步中...';
+
+        try {
+            const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/?t=${new Date().getTime()}`);
+            if (!resp.ok) throw new Error('API Fail');
+            const files = await resp.json();
+            
+            const musicList = files
+                .filter(f => f.name.toLowerCase().endsWith('.mp3'))
+                .map(f => ({
+                    name: f.name.replace(/\.mp3$/i, ''),
+                    artist: '',
+                    url: f.download_url || f.name, // 使用 download_url 更稳定
+                    cover: CONFIG.defaultCover
+                }));
+
+            const ap = new APlayer({
+                container: document.getElementById('player'),
+                listFolded: false, 
+                theme: '#1f3a8a', 
+                order: 'list',
+                audio: musicList
+            });
+
+            statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
+        } catch (err) {
+            statusEl.innerText = "同步失败，请检查网络";
+        }
+    }
+
+    initMusicStation();
 </script>
 </body>
 </html>
