@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -16,7 +17,9 @@ jobs:
           echo "[" > songlist.json
           first=true
 
-          find music -type f -name "*.mp3" | sort | while read f; do
+          # 扫描根目录 mp3
+          for f in *.mp3; do
+            [ -e "$f" ] || continue
             filename=$(basename "$f")
             title="${filename%.mp3}"
 
