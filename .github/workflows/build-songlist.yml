@@ -3,7 +3,8 @@ name: Build songlist.json
 on:
   push:
     paths:
-      - "music/**/*.mp3"
+      - "*.mp3"
+
 
 jobs:
   build:
