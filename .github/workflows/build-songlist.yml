@@ -24,10 +24,9 @@ jobs:
             [ -e "$f" ] || continue
             filename=$(basename "$f")
             title="${filename%.mp3}"
-            
-            # 使用 Python 处理 JSON 转义，防止歌名有特殊字符导致出错
-            esc_title=$(printf '%s' "$title" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().strip())[1:-1])')
-            esc_file=$(printf '%s' "$f" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().strip())[1:-1])')
+
+            esc_title=$(printf '%s' "$title" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().strip(), ensure_ascii=False)[1:-1])')
+            esc_file=$(printf '%s' "$f" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().strip(), ensure_ascii=False)[1:-1])')
 
             if [ "$first" = true ]; then
               first=false
