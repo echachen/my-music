@@ -1,7 +1,5 @@
 name: Build songlist.json
 
-name: Build songlist.json
-
 on:
   push:
     paths:
