@@ -4,10 +4,14 @@ on:
   push:
     paths:
       - "*.mp3"
+      - ".github/workflows/**" # 方便调试
+  workflow_dispatch: # 👈 增加手动触发按钮，不用每次都传 MP3 也能测试
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions: # 👈 关键：赋予 Action 写入文件的权限
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -15,31 +19,30 @@ jobs:
         run: |
           echo "[" > songlist.json
           first=true
-
-          # 扫描根目录所有 mp3
+          # 扫描当前目录下所有 mp3
           for f in *.mp3; do
             [ -e "$f" ] || continue
             filename=$(basename "$f")
             title="${filename%.mp3}"
-
-            esc_title=$(printf '%s' "$title" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read())[1:-1])')
-            esc_file=$(printf '%s' "$f" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read())[1:-1])')
+            
+            # 使用 Python 处理 JSON 转义，防止歌名有特殊字符导致出错
+            esc_title=$(printf '%s' "$title" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().strip())[1:-1])')
+            esc_file=$(printf '%s' "$f" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().strip())[1:-1])')
 
             if [ "$first" = true ]; then
               first=false
             else
               echo "," >> songlist.json
             fi
-
-            echo "  { \"title\": \"$esc_title\", \"src\": \"https://cdn.jsdelivr.net/gh/${GITHUB_REPOSITORY}/$esc_file\" }" >> songlist.json
+            # 这里的链接不要写死 CDN，方便后续调试
+            echo "  { \"title\": \"$esc_title\", \"src\": \"https://echachen.github.io/my-music/$esc_file\" }" >> songlist.json
           done
-
           echo "]" >> songlist.json
 
-      - name: Commit songlist.json
+      - name: Commit and Push
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add songlist.json
-          git commit -m "Auto update songlist.json" || echo "No changes"
-          git push
+          git commit -m "Auto update songlist.json" || exit 0
+          git push origin main  # 👈 确保这里写对你的分支名（通常是 main 或 master）
