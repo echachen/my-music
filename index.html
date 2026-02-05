@@ -124,9 +124,12 @@
         /* 歌曲目录 */
         .aplayer .aplayer-list {
             background: transparent !important;
-            margin-top: 70px !important; /* 增加间距使其向下挪一些 */
+            /*margin-top: 70px !important; /* 增加间距使其向下挪一些 */
             border: none !important; 
             max-height: 350px !important; /* 多显示歌曲 */
+        }
+        .aplayer .aplayer-info {
+            margin-bottom: 40px !important; 
         }
         .aplayer .aplayer-list ol li {
             border: none !important; 
@@ -211,6 +214,7 @@
                 listFolded: false, 
                 theme: '#1f3a8a', 
                 order: 'list',
+                listMaxHeight: '350px',
                 audio: musicList
             });
 
