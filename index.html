@@ -124,12 +124,12 @@
         /* 歌曲目录 */
         .aplayer .aplayer-list {
             background: transparent !important;
-            /*margin-top: 70px !important; /* 增加间距使其向下挪一些 */
+            margin-top: 0 !important;
             border: none !important; 
             max-height: 350px !important; /* 多显示歌曲 */
         }
         .aplayer .aplayer-info {
-            margin-bottom: 40px !important; 
+            margin-bottom: 35px !important; 
         }
         .aplayer .aplayer-list ol li {
             border: none !important; 
@@ -209,15 +209,28 @@
                     cover: CONFIG.defaultCover
                 }));
 
+// 1. 初始化播放器（参数都在小括号内）
             const ap = new APlayer({
                 container: document.getElementById('player'),
                 listFolded: false, 
                 theme: '#1f3a8a', 
                 order: 'list',
-                listMaxHeight: '350px',
+                listMaxHeight: '350px', // 👈 告诉播放器列表的最大高度
                 audio: musicList
             });
 
+            // 2. 强行纠偏脚本（在初始化之后，解决点击歌曲乱跳的 Bug）
+            ap.on('listswitch', () => {
+                setTimeout(() => {
+                    const activeItem = document.querySelector('.aplayer-list-light');
+                    if (activeItem) {
+                        activeItem.scrollIntoView({
+                            behavior: 'smooth', // 平滑滚动
+                            block: 'center'     // 👈 强行让选中的歌停在列表正中间
+                        });
+                    }
+                }, 100); 
+            });
             statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
         } catch (err) {
             statusEl.innerText = "同步失败，请检查网络";
