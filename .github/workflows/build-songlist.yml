@@ -1,18 +1,17 @@
 name: Build songlist.json
 
+name: Build songlist.json
+
 on:
   push:
     paths:
       - "*.mp3"
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Generate songlist.json
         run: |
