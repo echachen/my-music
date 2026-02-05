@@ -7,23 +7,17 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shikwasa/dist/shikwasa.min.css">
     <script src="https://cdn.jsdelivr.net/npm/shikwasa/dist/shikwasa.min.js"></script>
     <style>
-        /* 1. 动态渐变背景 & 基础样式 */
         body { 
             margin: 0; 
             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             background-size: 400% 400%;
             animation: gradient 15s ease infinite;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            font-family: system-ui, -apple-system, sans-serif; 
             display: flex; justify-content: center; align-items: flex-start; 
             padding-top: 20px; min-height: 100vh; 
         }
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-        /* 2. 磨砂玻璃主卡片 */
         .main-card { 
             width: 95%; max-width: 500px; 
             background: rgba(255, 255, 255, 0.1); 
@@ -34,23 +28,15 @@
         }
 
         .header { color: white; text-align: center; margin-bottom: 25px; }
-        .header h2 { font-weight: 300; font-size: 1.3rem; margin: 0; letter-spacing: 1px; }
+        .header h2 { font-weight: 300; font-size: 1.3rem; margin: 0; }
 
-        /* 3. 播放器容器间距控制 */
-        #player { margin-bottom: 20px; }
-
-        /* 4. 曲库列表容器 */
         .playlist-container {
-            margin-top: 80px; /* 👈 调整标题与列表的间距 */
+            margin-top: 80px; /* 👈 增加标题与列表的间距 */
             max-height: 400px;
             overflow-y: auto;
-            padding-right: 5px;
-            /* 滚动条美化 */
             scrollbar-width: thin;
-            scrollbar-color: rgba(255,255,255,0.2) transparent;
         }
 
-        /* 5. 歌曲条目样式 */
         .music-item {
             padding: 12px 15px;
             margin-bottom: 10px;
@@ -58,18 +44,13 @@
             border-radius: 12px;
             color: rgba(255, 255, 255, 0.9);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             font-size: 14px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
         .music-item:hover { background: rgba(255, 255, 255, 0.15); }
         .music-item.active { 
             background: rgba(31, 58, 138, 0.7); 
             border-left: 5px solid #fff; 
-            padding-left: 10px;
-            font-weight: bold;
         }
 
         #status { font-size: 11px; opacity: 0.7; margin-top: 10px; text-align: center; color: white; }
@@ -80,92 +61,69 @@
 <div class="main-card">
     <div class="header">
         <h2>🎵 和平之后圣乐分享</h2>
-        <p id="status">正在同步最新曲库...</p>
+        <p id="status">正在同步曲库...</p>
     </div>
-
     <div id="player"></div>
-
     <div class="playlist-container" id="playlist"></div>
 </div>
 
 <script>
-    // 👈 配置你的 JSON 地址（加上时间戳防止浏览器缓存）
-    const CONFIG = {
-        jsonUrl: 'https://echachen.github.io/my-music/songlist.json?v=' + new Date().getTime()
-    };
+    // 👈 使用相对路径，这样无论域名怎么变都能找到
+    const JSON_PATH = 'songlist.json?v=' + new Date().getTime();
 
     let player = null;
     let musicData = [];
     let currentIndex = 0;
 
-    async function initMusicStation() {
+    async function init() {
         const statusEl = document.getElementById('status');
-        const playlistEl = document.getElementById('playlist');
-
         try {
-            // 1. 获取生成的静态歌单文件
-            const resp = await fetch(CONFIG.jsonUrl);
-            if (!resp.ok) throw new Error('无法连接到曲库文件');
+            // 1. 获取 JSON 文件
+            const response = await fetch(JSON_PATH);
+            if (!response.ok) throw new Error("无法读取账本文件 (404)");
             
-            musicData = await resp.json();
-            if (musicData.length === 0) throw new Error('曲库目前是空的');
+            musicData = await response.json();
+            if (!musicData.length) throw new Error("账本里没有歌曲");
 
-            // 2. 初始化 Shikwasa 播放器
+            // 2. 初始化 Shikwasa
             player = new Shikwasa({
                 container: document.getElementById('player'),
                 audio: musicData[0],
-                themeColor: '#1f3a8a' // 圣母蓝主题
+                themeColor: '#1f3a8a'
             });
 
-            // 3. 渲染列表
-            renderPlaylist();
+            // 3. 生成列表
+            document.getElementById('playlist').innerHTML = musicData.map((s, i) => `
+                <div class="music-item ${i===0?'active':''}" onclick="playSong(${i})">
+                    ${s.title}
+                </div>
+            `).join('');
 
-            // 4. 监听播放结束，自动下一首
+            // 4. 自动连播功能
             player.on('ended', () => {
-                if (currentIndex < musicData.length - 1) {
-                    playSong(currentIndex + 1);
-                }
+                if (currentIndex + 1 < musicData.length) playSong(currentIndex + 1);
             });
 
-            statusEl.innerText = `已成功同步 ${musicData.length} 首云端歌曲`;
+            statusEl.innerText = `已成功加载 ${musicData.length} 首歌曲`;
 
         } catch (err) {
             console.error(err);
-            statusEl.innerText = "加载失败，请检查 songlist.json 是否存在";
+            statusEl.innerText = "数据同步中，请刷新页面"; 
         }
     }
 
-    function renderPlaylist() {
-        const playlistEl = document.getElementById('playlist');
-        playlistEl.innerHTML = musicData.map((song, index) => `
-            <div class="music-item ${index === 0 ? 'active' : ''}" onclick="playSong(${index})">
-                ${song.title}
-            </div>
-        `).join('');
-    }
-
-    function playSong(index) {
-        if (index === currentIndex && player.playing) return;
-
-        currentIndex = index;
-        
-        // 更新播放器音频源
-        player.update({ audio: musicData[index] });
+    function playSong(i) {
+        currentIndex = i;
+        player.update({ audio: musicData[i] });
         player.play();
 
-        // 更新列表高亮状态
         const items = document.querySelectorAll('.music-item');
         items.forEach(it => it.classList.remove('active'));
-        items[index].classList.add('active');
-
-        // 自动将正在播放的歌曲滚动到视野内
-        items[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        
-        document.getElementById('status').innerText = "当前播放: " + musicData[index].title;
+        items[i].classList.add('active');
+        items[i].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    // 启动项目
-    initMusicStation();
+    init();
 </script>
 </body>
 </html>
