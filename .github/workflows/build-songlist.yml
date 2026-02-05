@@ -1,0 +1,45 @@
+name: Build songlist.json
+
+on:
+  push:
+    paths:
+      - "music/**/*.mp3"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Generate songlist.json
+        run: |
+          echo "[" > songlist.json
+          first=true
+
+          find music -type f -name "*.mp3" | sort | while read f; do
+            filename=$(basename "$f")
+            title="${filename%.mp3}"
+
+            esc_title=$(printf '%s' "$title" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read())[1:-1])')
+            esc_file=$(printf '%s' "$f" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read())[1:-1])')
+
+            if [ "$first" = true ]; then
+              first=false
+            else
+              echo "," >> songlist.json
+            fi
+
+            echo "  { \"title\": \"$esc_title\", \"src\": \"https://cdn.jsdelivr.net/gh/${GITHUB_REPOSITORY}/$esc_file\" }" >> songlist.json
+          done
+
+          echo "]" >> songlist.json
+
+      - name: Commit songlist.json
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add songlist.json
+          git commit -m "Auto update songlist.json" || echo "No changes"
+          git push
