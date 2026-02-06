@@ -183,70 +183,60 @@
 </div>
 
 <script>
-const CONFIG = {
-    jsonUrl: 'https://cdn.jsdelivr.net/gh/echachen/my-music/songlist.json'
-};
+    const CONFIG = {
+        owner: 'echachen',
+        repo: 'my-music',
+        defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
+    };
 
-async function initMusicStation() {
-   const musicList = await res.json();
+    async function initMusicStation() {
+        const statusEl = document.getElementById('status');
+        // 加载动画立即生效
+        statusEl.innerHTML = '<span class="loading-dot"></span>同步中...';
 
-// 核心修复：格式转换 + 自动编码 URL
-const formattedList = musicList.map(item => ({
-    name: item.title,
-    artist: "圣乐分享",
-    url: encodeURI(item.src).replace(/%20/g, ' '), // 处理中文并保留空格
-    cover: 'https://via.placeholder.com/300?text=Music' // 暂用占位封面
-}));
+        try {
+            const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/`);
+            if (!resp.ok) throw new Error('API Fail');
+            const files = await resp.json();
+            
+            const musicList = files
+                .filter(f => f.name.toLowerCase().endsWith('.mp3'))
+                .map(f => ({
+                    name: f.name.replace(/\.mp3$/i, ''),
+                    artist: '', // 彻底去除后缀文字
+                    url: f.download_url || f.name, // 优先使用稳定下载链接
+                    cover: CONFIG.defaultCover
+                }));
 
-const ap = new APlayer({
-    container: document.getElementById('player'),
-    listFolded: false,
-    audio: formattedList, // 使用修正后的变量
-    // ... 其他配置保持不变
-});
-
-        /* ========= 只修滚动，不碰 UI ========= */
-
-        const listEl = document.querySelector('.aplayer-list ol');
-        let allowScroll = false;
-
-        Object.defineProperty(listEl, 'scrollTop', {
-            set() {
-                if (!allowScroll) return;
-            }
-        });
-
-        listEl.addEventListener('click', e => {
-            const li = e.target.closest('li');
-            if (!li) return;
-
-            allowScroll = true;
-            requestAnimationFrame(() => {
-                li.scrollIntoView({ block: 'nearest' });
-                allowScroll = false;
+// 1. 初始化播放器（参数都在小括号内）
+            const ap = new APlayer({
+                container: document.getElementById('player'),
+                listFolded: false, 
+                theme: '#1f3a8a', 
+                order: 'list',
+                listMaxHeight: '350px', // 👈 告诉播放器列表的最大高度
+                audio: musicList
             });
-        });
 
-        ap.on('listswitch', () => {
-            const active = document.querySelector('.aplayer-list-light');
-            if (!active) return;
-
-            allowScroll = true;
-            requestAnimationFrame(() => {
-                active.scrollIntoView({ block: 'nearest' });
-                allowScroll = false;
+            // 2. 强行纠偏脚本（在初始化之后，解决点击歌曲乱跳的 Bug）
+            ap.on('listswitch', () => {
+                setTimeout(() => {
+                    const activeItem = document.querySelector('.aplayer-list-light');
+                    if (activeItem) {
+                        activeItem.scrollIntoView({
+                            behavior: 'smooth', // 平滑滚动
+                            block: 'center'     // 👈 强行让选中的歌停在列表正中间
+                        });
+                    }
+                }, 100); 
             });
-        });
-
-        statusEl.innerText = `已成功加载 ${musicList.length} 首歌曲`;
-
-    } catch (err) {
-        console.error(err);
-        statusEl.innerText = '同步失败，请检查 JSON';
+            statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
+        } catch (err) {
+            statusEl.innerText = "同步失败，请检查网络";
+        }
     }
-}
 
-initMusicStation();
+    initMusicStation();
 </script>
 </body>
 </html>
