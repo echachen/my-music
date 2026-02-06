@@ -125,24 +125,11 @@
         .aplayer .aplayer-info {
             margin-bottom: 60px !important; 
         }
-       .aplayer .aplayer-list {
-    background: transparent !important;
-    border: none !important; 
-    max-height: 350px !important;
-    /* 🚀 核心修复：强制取消所有自动滚动的平滑感，消除“跳动”视觉 */
-    scroll-behavior: auto !important; 
-}
-
-.aplayer .aplayer-list ol li {
-    border: none !important; 
-    color: #444 !important; 
-    padding: 2px 15px !important; /* 你最满意的 2 和 15 */
-    font-size: 15px !important; 
-    /* 🌟 解决阴影居中：通过固定行高，强制文字垂直锁定在色块中心 */
-    line-height: 26px !important; 
-    display: flex !important;
-    align-items: center !important;
-}
+        .aplayer .aplayer-list ol li {
+            border: none !important; 
+            color: #444 !important; /* 列表文字改为深灰 */
+            padding: 2px 15px !important;
+            font-size: 15px !important; 
         }
         .aplayer .aplayer-list ol li:hover { background: rgba(31, 58, 138, 0.05) !important; }
         .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(31, 58, 138, 0.1) !important; }
@@ -215,30 +202,29 @@
                 }));
 
             const ap = new APlayer({
-        container: document.getElementById('player'),
-        listFolded: false, 
-        theme: '#1f3a8a', 
-        order: 'list',
-        listMaxHeight: '350px',
-        audio: musicList
-    });
-            
-if (ap.list) {
-    // 1. 彻底废除 APlayer 的 scrollTo 原型链，让它根本发不出滚动指令
-    ap.list.scrollTo = function() { return false; };
+                container: document.getElementById('player'),
+                listFolded: false, 
+                theme: '#1f3a8a', 
+                order: 'list',
+                listMaxHeight: '350px',
+                audio: musicList
+            });
 
-    // 2. 暴力锁定：即使它尝试修改 scrollTop，我们也实时把它按住
-    const listEl = document.querySelector('.aplayer-list');
-    if (listEl) {
-        listEl.style.scrollBehavior = 'auto'; // 再次确认关闭平滑模式
-    }
-}
-    // 4. 最后显示成功文字
-    statusEl.innerText = `赞美天主，已加载 ${musicList.length} 首圣乐`;
-
-} catch (err) {
-    statusEl.innerText = "同步失败，请刷新页面";
-}
+            ap.on('listswitch', () => {
+                setTimeout(() => {
+                    const activeItem = document.querySelector('.aplayer-list-light');
+                    if (activeItem) {
+                        activeItem.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }
+                }, 100); 
+            });
+            statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
+        } catch (err) {
+            statusEl.innerText = "同步失败，请检查网络";
+        }
     }
 
     initMusicStation();
