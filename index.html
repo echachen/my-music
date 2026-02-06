@@ -201,26 +201,27 @@
                     cover: CONFIG.defaultCover
                 }));
 
-            const ap = new APlayer({
-                container: document.getElementById('player'),
-                listFolded: false, 
-                theme: '#1f3a8a', 
-                order: 'list',
-                listMaxHeight: '350px',
-                audio: musicList
-            });
+           const ap = new APlayer({
+                   container: document.getElementById('player'),
+                   listFolded: false,
+                   listMaxHeight: '350px',
+                   order: 'list',
+                   theme: '#1f3a8a',
+                   audio: musicList
+               });
 
-            ap.on('listswitch', () => {
-                setTimeout(() => {
-                    const activeItem = document.querySelector('.aplayer-list-light');
-                    if (activeItem) {
-                        activeItem.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center'
-                        });
-                    }
-                }, 100); 
+          // 当歌曲切换时，执行平滑纠偏，而不是任由 APlayer 乱跳
+          ap.on('listswitch', () => {
+          setTimeout(() => {
+          const activeItem = document.querySelector('.aplayer-list-light');
+          if (activeItem) {
+            activeItem.scrollIntoView({
+                behavior: 'smooth', // 平滑滚动，不突兀
+                block: 'center'      // 强行让选中的歌停在列表正中间
             });
+        }
+    }, 100); 
+});
             statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
         } catch (err) {
             statusEl.innerText = "同步失败，请检查网络";
