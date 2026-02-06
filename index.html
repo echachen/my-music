@@ -128,7 +128,7 @@
         .aplayer .aplayer-list ol li {
             border: none !important; 
             color: #444 !important; /* 列表文字改为深灰 */
-            padding: 3px 4px !important;
+            padding: 1px 4px !important;
             font-size: 15px !important; 
             line-height: 20px !important;
         }
@@ -203,29 +203,33 @@
                 }));
 
             const ap = new APlayer({
-                container: document.getElementById('player'),
-                listFolded: false, 
-                theme: '#1f3a8a', 
-                order: 'list',
-                listMaxHeight: '350px',
-                audio: musicList
-            });
+        container: document.getElementById('player'),
+        listFolded: false, 
+        theme: '#1f3a8a', 
+        order: 'list',
+        listMaxHeight: '350px',
+        audio: musicList
+    });
 
-            ap.on('listswitch', () => {
-                setTimeout(() => {
-                    const activeItem = document.querySelector('.aplayer-list-light');
-                    if (activeItem) {
-                        activeItem.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center'
-                        });
-                    }
-                }, 100); 
-            });
-            statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
-        } catch (err) {
-            statusEl.innerText = "同步失败，请检查网络";
+    // 3. ✅ 就在这里：加一段“焊死手术”代码 (加一次即可)
+    if (ap.list) {
+        // 拦截 APlayer 内部的滚动函数，不让它乱跳
+        ap.list.scrollTo = function() { return false; };
+        
+        const listEl = document.querySelector('.aplayer-list ol');
+        if (listEl) {
+            listEl.addEventListener('scroll', function(e) {
+                // 允许手动划动，但不允许 APlayer 自动跳转
+            }, { passive: true });
         }
+    }
+
+    // 4. 最后显示成功文字
+    statusEl.innerText = `赞美天主，已加载 ${musicList.length} 首圣乐`;
+
+} catch (err) {
+    statusEl.innerText = "同步失败，请刷新页面";
+}
     }
 
     initMusicStation();
