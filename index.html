@@ -1,85 +1,54 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>和平之后圣乐分享</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>和平之后圣乐分享</title>
 
-    <!-- Shikwasa -->
-    <link rel="stylesheet" href="https://unpkg.com/shikwasa/dist/shikwasa.min.css">
-    <script src="https://unpkg.com/shikwasa/dist/shikwasa.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/shikwasa/dist/shikwasa.min.css">
+<script src="https://unpkg.com/shikwasa/dist/shikwasa.min.js"></script>
 
-    <style>
-        body { 
-            margin: 0; 
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: flex-start; 
-            padding-top: 20px;
-            min-height: 100vh; 
-        }
-
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .main-card { 
-            width: 95%; 
-            max-width: 500px; 
-            background: rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(12px); 
-            padding: 20px 15px 20px 15px; 
-            border-radius: 25px; 
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); 
-        }
-
-        .header { 
-            color: white; 
-            text-align: center; 
-            margin-bottom: 15px; 
-        }
-
-        .header h2 { 
-            font-weight: 300; 
-            letter-spacing: 1px; 
-            font-size: 1.2rem; 
-            margin: 0;
-        }
-
-        #player {
-            margin-bottom: 10px;
-        }
-
-        #playlist {
-            max-height: 350px;
-            overflow-y: auto;
-        }
-
-        .song-item {
-            padding: 8px 10px;
-            cursor: pointer;
-            font-size: 14px;
-            color: rgba(255,255,255,0.85);
-            border-radius: 8px;
-        }
-
-        .song-item:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .song-item.active {
-            background: rgba(31,58,138,0.35);
-            font-weight: bold;
-            color: #fff;
-        }
-    </style>
+<style>
+body {
+    margin: 0;
+    background: linear-gradient(-45deg,#ee7752,#e73c7e,#23a6d5,#23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    font-family: system-ui;
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+    min-height: 100vh;
+}
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+.main-card {
+    width: 95%;
+    max-width: 500px;
+    background: rgba(255,255,255,.06);
+    backdrop-filter: blur(12px);
+    border-radius: 25px;
+    padding: 20px;
+    color: #fff;
+}
+.header { text-align: center; margin-bottom: 10px; }
+#playlist { max-height: 350px; overflow-y: auto; }
+.song {
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    opacity: .85;
+}
+.song:hover { background: rgba(255,255,255,.1); }
+.song.active {
+    background: rgba(31,58,138,.4);
+    opacity: 1;
+    font-weight: bold;
+}
+</style>
 </head>
 
 <body>
@@ -87,7 +56,7 @@
 <div class="main-card">
     <div class="header">
         <h2>🎵 和平之后圣乐分享</h2>
-        <p id="status" style="font-size:11px; opacity:0.6; margin-top:5px;">连接中...</p>
+        <p id="status" style="font-size:11px;opacity:.6">连接中...</p>
     </div>
 
     <div id="player"></div>
@@ -95,71 +64,70 @@
 </div>
 
 <script>
-const CONFIG = {
-    jsonUrl: 'https://cdn.jsdelivr.net/gh/echachen/my-music/songlist.json',
-    defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
-};
+const JSON_URL = 'https://cdn.jsdelivr.net/gh/echachen/my-music/songlist.json';
 
-async function initMusicStation() {
-    const statusEl = document.getElementById('status');
-    const playlistEl = document.getElementById('playlist');
+async function init() {
+    const status = document.getElementById('status');
+    const listEl = document.getElementById('playlist');
 
     try {
-        const res = await fetch(CONFIG.jsonUrl + '?t=' + Date.now());
-        if (!res.ok) throw new Error('JSON 加载失败');
+        const res = await fetch(JSON_URL + '?t=' + Date.now());
+        if (!res.ok) throw new Error('fetch failed');
 
-        const musicList = await res.json();
+        const raw = await res.json();
 
-        let player = new Shikwasa({
+        // ✅ APlayer → Shikwasa 格式转换
+        const songs = raw.map(s => ({
+            title: s.name,
+            artist: '',
+            cover: s.cover || '',
+            src: s.url
+        }));
+
+        let index = 0;
+
+        const player = new Shikwasa({
             container: document.getElementById('player'),
-            audio: musicList[0],
+            audio: songs[0],
             themeColor: '#1f3a8a',
             autoplay: false
         });
 
-        playlistEl.innerHTML = musicList.map((song, index) => `
-            <div class="song-item" data-index="${index}">
-                ${index + 1}. ${song.name}
-            </div>
+        listEl.innerHTML = songs.map((s,i)=>`
+            <div class="song" data-i="${i}">${i+1}. ${s.title}</div>
         `).join('');
 
-        function setActive(index) {
-            document.querySelectorAll('.song-item')
-                .forEach(el => el.classList.remove('active'));
-            const el = document.querySelector(`.song-item[data-index="${index}"]`);
-            if (el) el.classList.add('active');
+        function setActive(i){
+            document.querySelectorAll('.song').forEach(e=>e.classList.remove('active'));
+            document.querySelector(`.song[data-i="${i}"]`)?.classList.add('active');
         }
 
-        playlistEl.addEventListener('click', e => {
-            const item = e.target.closest('.song-item');
+        listEl.onclick = e => {
+            const item = e.target.closest('.song');
             if (!item) return;
+            index = +item.dataset.i;
+            player.update({ audio: songs[index] });
+            player.play();
+            setActive(index);
+        };
 
-            const index = Number(item.dataset.index);
-            player.update({ audio: musicList[index] });
+        player.on('ended', ()=>{
+            index = (index + 1) % songs.length;
+            player.update({ audio: songs[index] });
             player.play();
             setActive(index);
         });
 
-        let currentIndex = 0;
         setActive(0);
+        status.innerText = `已加载 ${songs.length} 首圣乐`;
 
-        player.on('ended', () => {
-            currentIndex++;
-            if (currentIndex >= musicList.length) currentIndex = 0;
-            player.update({ audio: musicList[currentIndex] });
-            player.play();
-            setActive(currentIndex);
-        });
-
-        statusEl.innerText = `已成功加载 ${musicList.length} 首圣乐`;
-
-    } catch (err) {
-        console.error(err);
-        statusEl.innerText = '加载失败，请检查 JSON';
+    } catch (e) {
+        console.error(e);
+        status.innerText = '❌ JSON 无法解析';
     }
 }
 
-initMusicStation();
+init();
 </script>
 
 </body>
