@@ -144,22 +144,26 @@
                 theme: '#1f3a8a', 
                 order: 'list',
                 listMaxHeight: '350px',
+                autoScroll: false,
                 audio: musicList
             });
-            ap.on('listshow', () => {
-            const list = document.querySelector('.aplayer-list');
-            if (!list) return;
+          ap.on('listswitch', () => {
+        requestAnimationFrame(() => {
+        const active = document.querySelector('.aplayer-list-light');
+        const list = document.querySelector('.aplayer-list ol');
+        if (!active || !list) return;
 
-            list.addEventListener('click', e => {
-            const li = e.target.closest('li');
-            if (!li) return;
+        const listRect = list.getBoundingClientRect();
+        const itemRect = active.getBoundingClientRect();
 
-        // 确保：点列表 = 立刻播放
-        setTimeout(() => {
-            ap.play();
-        }, 0);
+        list.scrollTop +=
+            itemRect.top -
+            listRect.top -
+            list.clientHeight / 2 +
+            itemRect.height / 2;
     });
 });
+
             // 2. 修正点击歌曲后的滚动 Bug
             ap.on('listswitch', () => {
             });
