@@ -1,119 +1,93 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>和平之后圣乐分享</title>
+<meta charset="UTF-8">
+<title>Music Station</title>
 
-    <!-- Shikwasa -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shikwasa/dist/shikwasa.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/shikwasa/dist/shikwasa.min.js"></script>
+<!-- Shikwasa 样式 -->
+<link rel="stylesheet" href="https://unpkg.com/shikwasa@2.2.1/dist/shikwasa.min.css">
 
-    <style>
-        /* 背景 */
-        body {
-            margin: 0;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 20px;
-            min-height: 100vh;
-        }
-
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* 卡片 */
-        .main-card {
-            width: 95%;
-            max-width: 500px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            padding: 25px 20px 30px;
-            border-radius: 28px;
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-
-        .header {
-            color: white;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .header h2 {
-            margin: 0;
-            font-weight: 400;
-            letter-spacing: 1px;
-        }
-
-        #status {
-            font-size: 11px;
-            opacity: 0.6;
-            margin-top: 6px;
-        }
-
-        /* Shikwasa 微调（不破坏结构） */
-        .shk-player {
-            --theme-color: rgb(31, 58, 138);
-            --text-color: #ffffff;
-            --sub-text-color: rgba(255,255,255,.7);
-            --slider-color: rgba(255,255,255,.3);
-        }
-    </style>
+<style>
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont;
+    background: #f7f7f7;
+    padding: 20px;
+  }
+  #status {
+    margin-bottom: 12px;
+    color: #555;
+    font-size: 14px;
+  }
+</style>
 </head>
+
 <body>
 
-<div class="main-card">
-    <div class="header">
-        <h2>🎵 和平之后圣乐分享</h2>
-        <div id="status">连接中…</div>
-    </div>
-    <div id="player"></div>
-</div>
+<div id="status">⏳ 正在加载音乐列表…</div>
+<div id="player"></div>
+
+<!-- Shikwasa JS -->
+<script src="https://unpkg.com/shikwasa@2.2.1/dist/shikwasa.min.js"></script>
 
 <script>
 const CONFIG = {
-    jsonUrl: 'https://echachen.github.io/my-music/songlist.json',
-    defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
+  jsonUrl: 'https://echachen.github.io/my-music/songlist.json'
 };
 
 async function initMusicStation() {
-    const statusEl = document.getElementById('status');
+  const statusEl = document.getElementById('status');
 
-    try {
-        const res = await fetch(CONFIG.jsonUrl + '?t=' + Date.now());
-        if (!res.ok) throw new Error('JSON 加载失败');
-
-        const rawList = await res.json();
-
-        // ✅ 不改 JSON，只在这里修 URL
-        const musicList = rawList.map(item => ({
-            title: item.title,
-            src: encodeURI(item.src),   // ← 关键：修复中文 / 空格
-            cover: CONFIG.defaultCover
-        }));
-
-        new Shikwasa({
-            container: () => document.getElementById('player'),
-            audio: musicList,
-            autoplay: false,
-            themeColor: 'rgb(31, 58, 138)'
-        });
-
-        statusEl.innerText = `已成功加载 ${musicList.length} 首圣乐`;
-
-    } catch (err) {
-        console.error(err);
-        statusEl.innerText = '❌ 加载失败，请检查 JSON 或网络';
+  try {
+    /* ① 拉 JSON（加时间戳防缓存） */
+    const res = await fetch(CONFIG.jsonUrl + '?t=' + Date.now());
+    if (!res.ok) {
+      throw new Error('HTTP ' + res.status);
     }
+
+    /* ② 强制按文本读取，防 BOM / 非法字符 */
+    const text = await res.text();
+
+    let rawList;
+    try {
+      rawList = JSON.parse(text);
+    } catch (e) {
+      console.error('JSON 原始内容：', text);
+      throw new Error('JSON 解析失败');
+    }
+
+    if (!Array.isArray(rawList)) {
+      throw new Error('JSON 不是数组');
+    }
+
+    /* ③ 在代码里修复 URL（不改 JSON） */
+    const musicList = rawList.map((item, index) => {
+      if (!item.src) {
+        throw new Error(`第 ${index + 1} 首歌缺少 src`);
+      }
+
+      return {
+        title: item.title || `Track ${index + 1}`,
+        artist: item.artist || '',
+        cover: item.cover || '',
+        src: encodeURI(item.src.trim())
+      };
+    });
+
+    /* ④ 初始化播放器 */
+    new Shikwasa({
+      container: () => document.getElementById('player'),
+      audio: musicList,
+      themeColor: '#3b82f6',
+      autoplay: false,
+      loop: false
+    });
+
+    statusEl.textContent = `✅ 成功加载 ${musicList.length} 首歌曲`;
+
+  } catch (err) {
+    console.error(err);
+    statusEl.textContent = '❌ 加载失败：' + err.message;
+  }
 }
 
 initMusicStation();
