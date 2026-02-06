@@ -183,60 +183,92 @@
 </div>
 
 <script>
-    const CONFIG = {
-        owner: 'echachen',
-        repo: 'my-music',
-        defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
-    };
+const CONFIG = {
+    jsonUrl: 'https://cdn.jsdelivr.net/gh/echachen/my-music/songlist.json',
+    defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
+};
 
-    async function initMusicStation() {
-        const statusEl = document.getElementById('status');
-        // 加载动画立即生效
-        statusEl.innerHTML = '<span class="loading-dot"></span>同步中...';
+async function initMusicStation() {
+    const statusEl = document.getElementById('status');
 
-        try {
-            const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/`);
-            if (!resp.ok) throw new Error('API Fail');
-            const files = await resp.json();
-            
-            const musicList = files
-                .filter(f => f.name.toLowerCase().endsWith('.mp3'))
-                .map(f => ({
-                    name: f.name.replace(/\.mp3$/i, ''),
-                    artist: '', // 彻底去除后缀文字
-                    url: f.download_url || f.name, // 优先使用稳定下载链接
-                    cover: CONFIG.defaultCover
-                }));
+    try {
+        const res = await fetch(CONFIG.jsonUrl + '?t=' + Date.now());
+        if (!res.ok) throw new Error('JSON 加载失败');
+        const musicList = await res.json();
 
-// 1. 初始化播放器（参数都在小括号内）
-            const ap = new APlayer({
-                container: document.getElementById('player'),
-                listFolded: false, 
-                theme: '#1f3a8a', 
-                order: 'list',
-                listMaxHeight: '350px', // 👈 告诉播放器列表的最大高度
-                audio: musicList
-            });
+        const musicList = files
+        .filter(f => f.name.toLowerCase().endsWith('.mp3'))
+        .map(f => ({
+        name: f.name.replace(/\.mp3$/i, ''),
+        artist: '',
+        url: `https://cdn.jsdelivr.net/gh/echachen/my-music@main/${f.name}`,
+        cover: CONFIG.defaultCover
+        }));
 
-            // 2. 强行纠偏脚本（在初始化之后，解决点击歌曲乱跳的 Bug）
-            ap.on('listswitch', () => {
-                setTimeout(() => {
-                    const activeItem = document.querySelector('.aplayer-list-light');
-                    if (activeItem) {
-                        activeItem.scrollIntoView({
-                            behavior: 'smooth', // 平滑滚动
-                            block: 'center'     // 👈 强行让选中的歌停在列表正中间
-                        });
-                    }
-                }, 100); 
-            });
-            statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
-        } catch (err) {
-            statusEl.innerText = "同步失败，请检查网络";
-        }
+        const ap = new APlayer({
+            container: document.getElementById('player'),
+            listFolded: false,
+            order: 'list',
+            theme: '#1f3a8a',
+            listMaxHeight: '350px',
+            audio: musicList
+        });
+
+        /* ===============================
+           方案二：彻底禁用 APlayer 自动滚动
+           =============================== */
+
+        const listEl = document.querySelector('.aplayer-list ol');
+
+        // 1️⃣ 禁止 APlayer 自己改 scrollTop
+        let lockScroll = false;
+
+        Object.defineProperty(listEl, 'scrollTop', {
+            set() {
+                if (!lockScroll) return;
+            }
+        });
+
+        // 2️⃣ 用户点击时，我们自己算滚动位置
+        listEl.addEventListener('click', e => {
+            const li = e.target.closest('li');
+            if (!li) return;
+
+            lockScroll = true;
+
+            setTimeout(() => {
+                li.scrollIntoView({
+                    block: 'center',
+                    behavior: 'smooth'
+                });
+                lockScroll = false;
+            }, 60);
+        });
+
+        // 3️⃣ 切歌时也统一走我们这套
+        ap.on('listswitch', () => {
+            const active = document.querySelector('.aplayer-list-light');
+            if (!active) return;
+
+            lockScroll = true;
+            setTimeout(() => {
+                active.scrollIntoView({
+                    block: 'center',
+                    behavior: 'smooth'
+                });
+                lockScroll = false;
+            }, 60);
+        });
+
+        statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
+
+    } catch (err) {
+        console.error(err);
+        statusEl.innerText = '同步失败，请检查网络或 JSON';
     }
+}
 
-    initMusicStation();
+initMusicStation();
 </script>
 </body>
 </html>
