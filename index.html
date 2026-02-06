@@ -2,31 +2,64 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>Music Station</title>
+<title>我的音乐站</title>
 
-<!-- Shikwasa 样式 -->
+<!-- Shikwasa -->
 <link rel="stylesheet" href="https://unpkg.com/shikwasa@2.2.1/dist/shikwasa.min.css">
 
 <style>
   body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont;
-    background: #f7f7f7;
+    margin: 0;
     padding: 20px;
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
-  #status {
+
+  .station {
+    max-width: 420px;
+    margin: auto;
+  }
+
+  .title {
+    font-size: 22px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    opacity: .85;
     margin-bottom: 12px;
-    color: #555;
-    font-size: 14px;
+  }
+
+  #status {
+    text-align: center;
+    font-size: 12px;
+    opacity: .9;
+    margin-bottom: 10px;
+  }
+
+  #player {
+    background: #fff;
+    border-radius: 14px;
+    padding: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
   }
 </style>
 </head>
 
 <body>
 
-<div id="status">⏳ 正在加载音乐列表…</div>
-<div id="player"></div>
+<div class="station">
+  <div class="title">🎵 我的音乐站</div>
+  <div class="subtitle">Shikwasa · 自动加载播放列表</div>
+  <div id="status">⏳ 正在加载音乐…</div>
+  <div id="player"></div>
+</div>
 
-<!-- Shikwasa JS -->
 <script src="https://unpkg.com/shikwasa@2.2.1/dist/shikwasa.min.js"></script>
 
 <script>
@@ -38,51 +71,36 @@ async function initMusicStation() {
   const statusEl = document.getElementById('status');
 
   try {
-    /* ① 拉 JSON（加时间戳防缓存） */
+    /* ① 拉 JSON（防缓存） */
     const res = await fetch(CONFIG.jsonUrl + '?t=' + Date.now());
-    if (!res.ok) {
-      throw new Error('HTTP ' + res.status);
-    }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
 
-    /* ② 强制按文本读取，防 BOM / 非法字符 */
+    /* ② 用 text → JSON.parse，最稳 */
     const text = await res.text();
-
-    let rawList;
-    try {
-      rawList = JSON.parse(text);
-    } catch (e) {
-      console.error('JSON 原始内容：', text);
-      throw new Error('JSON 解析失败');
-    }
+    const rawList = JSON.parse(text);
 
     if (!Array.isArray(rawList)) {
       throw new Error('JSON 不是数组');
     }
 
-    /* ③ 在代码里修复 URL（不改 JSON） */
-    const musicList = rawList.map((item, index) => {
-      if (!item.src) {
-        throw new Error(`第 ${index + 1} 首歌缺少 src`);
-      }
+    /* ③ 代码层修复 URL */
+    const musicList = rawList.map((item, i) => ({
+      title: item.title || `Track ${i + 1}`,
+      artist: item.artist || '',
+      cover: item.cover || '',
+      src: encodeURI(item.src.trim())
+    }));
 
-      return {
-        title: item.title || `Track ${index + 1}`,
-        artist: item.artist || '',
-        cover: item.cover || '',
-        src: encodeURI(item.src.trim())
-      };
-    });
-
-    /* ④ 初始化播放器 */
+    /* ④ 初始化 Shikwasa */
     new Shikwasa({
       container: () => document.getElementById('player'),
       audio: musicList,
-      themeColor: '#3b82f6',
+      themeColor: '#2563eb',
       autoplay: false,
       loop: false
     });
 
-    statusEl.textContent = `✅ 成功加载 ${musicList.length} 首歌曲`;
+    statusEl.textContent = `✅ 已加载 ${musicList.length} 首歌曲`;
 
   } catch (err) {
     console.error(err);
