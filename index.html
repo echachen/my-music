@@ -184,8 +184,7 @@
 
 <script>
 const CONFIG = {
-    jsonUrl: 'https://cdn.jsdelivr.net/gh/echachen/my-music/songlist.json',
-    defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
+    jsonUrl: 'https://cdn.jsdelivr.net/gh/echachen/my-music/songlist.json'
 };
 
 async function initMusicStation() {
@@ -194,16 +193,9 @@ async function initMusicStation() {
     try {
         const res = await fetch(CONFIG.jsonUrl + '?t=' + Date.now());
         if (!res.ok) throw new Error('JSON 加载失败');
-        const musicList = await res.json();
 
-        const musicList = files
-        .filter(f => f.name.toLowerCase().endsWith('.mp3'))
-        .map(f => ({
-        name: f.name.replace(/\.mp3$/i, ''),
-        artist: '',
-        url: `https://cdn.jsdelivr.net/gh/echachen/my-music@main/${f.name}`,
-        cover: CONFIG.defaultCover
-        }));
+        // ✅ songlist.json 必须是 APlayer 标准格式
+        const musicList = await res.json();
 
         const ap = new APlayer({
             container: document.getElementById('player'),
@@ -211,60 +203,48 @@ async function initMusicStation() {
             order: 'list',
             theme: '#1f3a8a',
             listMaxHeight: '350px',
-            audio: musicList
+            audio: musicList,
+            autoplay: false
         });
 
-        /* ===============================
-           方案二：彻底禁用 APlayer 自动滚动
-           =============================== */
+        /* ========= 只修滚动，不碰 UI ========= */
 
         const listEl = document.querySelector('.aplayer-list ol');
-
-        // 1️⃣ 禁止 APlayer 自己改 scrollTop
-        let lockScroll = false;
+        let allowScroll = false;
 
         Object.defineProperty(listEl, 'scrollTop', {
             set() {
-                if (!lockScroll) return;
+                if (!allowScroll) return;
             }
         });
 
-        // 2️⃣ 用户点击时，我们自己算滚动位置
         listEl.addEventListener('click', e => {
             const li = e.target.closest('li');
             if (!li) return;
 
-            lockScroll = true;
-
-            setTimeout(() => {
-                li.scrollIntoView({
-                    block: 'center',
-                    behavior: 'smooth'
-                });
-                lockScroll = false;
-            }, 60);
+            allowScroll = true;
+            requestAnimationFrame(() => {
+                li.scrollIntoView({ block: 'nearest' });
+                allowScroll = false;
+            });
         });
 
-        // 3️⃣ 切歌时也统一走我们这套
         ap.on('listswitch', () => {
             const active = document.querySelector('.aplayer-list-light');
             if (!active) return;
 
-            lockScroll = true;
-            setTimeout(() => {
-                active.scrollIntoView({
-                    block: 'center',
-                    behavior: 'smooth'
-                });
-                lockScroll = false;
-            }, 60);
+            allowScroll = true;
+            requestAnimationFrame(() => {
+                active.scrollIntoView({ block: 'nearest' });
+                allowScroll = false;
+            });
         });
 
-        statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
+        statusEl.innerText = `已成功加载 ${musicList.length} 首歌曲`;
 
     } catch (err) {
         console.error(err);
-        statusEl.innerText = '同步失败，请检查网络或 JSON';
+        statusEl.innerText = '同步失败，请检查 JSON';
     }
 }
 
