@@ -183,50 +183,34 @@
 </div>
 
 <script>
-    const CONFIG = {
-        owner: 'echachen',
-        repo: 'my-music',
-        defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
-    };
+const CONFIG = {
+    owner: 'echachen',
+    repo: 'my-music',
+    defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
+};
 
-    async function initMusicStation() {
-        const statusEl = document.getElementById('status');
-        // 加载动画立即生效
-        statusEl.innerHTML = '<span class="loading-dot"></span>同步中...';
+async function initMusicStation() {
+    const statusEl = document.getElementById('status');
+    statusEl.innerHTML = '<span class="loading-dot"></span>同步中...';
 
-        try {
-            const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/`);
-            if (!resp.ok) throw new Error('API Fail');
-            const files = await resp.json();
-            
-            const musicList = files
-                .filter(f => f.name.toLowerCase().endsWith('.mp3'))
-                .map(f => ({
-                    name: f.name.replace(/\.mp3$/i, ''),
-                    artist: '', // 彻底去除后缀文字
-                    url: f.download_url || f.name, // 优先使用稳定下载链接
-                    cover: CONFIG.defaultCover
-                }));
+    try {
+        const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/`);
+        if (!resp.ok) throw new Error('API Fail');
+        const files = await resp.json();
 
-           const ap = new APlayer({
-    container: document.getElementById('player'),
-    listFolded: false,
-    theme: '#1f3a8a',
-    order: 'list',
-    listMaxHeight: '350px',
-    audio: musicList
-});
+        const musicList = files
+            .filter(f => f.name.toLowerCase().endsWith('.mp3'))
+            .map(f => ({
+                name: f.name.replace(/\.mp3$/i, ''),
+                artist: '',
+                url: f.download_url,
+                cover: CONFIG.defaultCover
+            }));
 
-(function lockScroll() {
-    const list = document.querySelector('.aplayer-list');
-    if (!list) return;
-
-    list.style.scrollBehavior = 'auto';
-    list.style.overscrollBehavior = 'contain';
-
-    if (!Element.prototype._scrollIntoView) {
-        Element.prototype._scrollIntoView = Element.prototype.scrollIntoView;
-        Element.prototype.scrollconst ap = new APlayer({
+        /* =========================
+           1️⃣ 初始化 APlayer
+           ========================= */
+        const ap = new APlayer({
             container: document.getElementById('player'),
             listFolded: false,
             theme: '#1f3a8a',
@@ -276,7 +260,6 @@
         console.error(err);
     }
 }
-
 initMusicStation();
 </script>
 </body>
