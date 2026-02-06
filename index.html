@@ -188,24 +188,22 @@ const CONFIG = {
 };
 
 async function initMusicStation() {
-    const statusEl = document.getElementById('status');
+   const musicList = await res.json();
 
-    try {
-        const res = await fetch(CONFIG.jsonUrl + '?t=' + Date.now());
-        if (!res.ok) throw new Error('JSON 加载失败');
+// 核心修复：格式转换 + 自动编码 URL
+const formattedList = musicList.map(item => ({
+    name: item.title,
+    artist: "圣乐分享",
+    url: encodeURI(item.src).replace(/%20/g, ' '), // 处理中文并保留空格
+    cover: 'https://via.placeholder.com/300?text=Music' // 暂用占位封面
+}));
 
-        // ✅ songlist.json 必须是 APlayer 标准格式
-        const musicList = await res.json();
-
-        const ap = new APlayer({
-            container: document.getElementById('player'),
-            listFolded: false,
-            order: 'list',
-            theme: '#1f3a8a',
-            listMaxHeight: '350px',
-            audio: musicList,
-            autoplay: false
-        });
+const ap = new APlayer({
+    container: document.getElementById('player'),
+    listFolded: false,
+    audio: formattedList, // 使用修正后的变量
+    // ... 其他配置保持不变
+});
 
         /* ========= 只修滚动，不碰 UI ========= */
 
