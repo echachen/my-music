@@ -146,15 +146,22 @@
                 listMaxHeight: '350px',
                 audio: musicList
             });
+            ap.on('listshow', () => {
+            const list = document.querySelector('.aplayer-list');
+            if (!list) return;
 
+            list.addEventListener('click', e => {
+            const li = e.target.closest('li');
+            if (!li) return;
+
+        // 确保：点列表 = 立刻播放
+        setTimeout(() => {
+            ap.play();
+        }, 0);
+    });
+});
             // 2. 修正点击歌曲后的滚动 Bug
             ap.on('listswitch', () => {
-                setTimeout(() => {
-                    const activeItem = document.querySelector('.aplayer-list-light');
-                    if (activeItem) {
-                        activeItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                }, 100); 
             });
 
             statusEl.innerText = `已成功加载 ${musicList.length} 首歌曲`;
