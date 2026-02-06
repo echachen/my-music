@@ -184,82 +184,81 @@
 
 <script>
 const CONFIG = {
-    owner: 'echachen',
-    repo: 'my-music',
+    jsonUrl: 'https://cdn.jsdelivr.net/gh/echachen/my-music/songlist.json',
     defaultCover: 'https://via.placeholder.com/300/ffffff/1a73e8?text=Church+Music'
 };
 
 async function initMusicStation() {
     const statusEl = document.getElementById('status');
-    statusEl.innerHTML = '<span class="loading-dot"></span>同步中...';
 
     try {
-        const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/`);
-        if (!resp.ok) throw new Error('API Fail');
-        const files = await resp.json();
+        const res = await fetch(CONFIG.jsonUrl + '?t=' + Date.now());
+        if (!res.ok) throw new Error('JSON 加载失败');
+        const musicList = await res.json();
 
-        const musicList = files
-            .filter(f => f.name.toLowerCase().endsWith('.mp3'))
-            .map(f => ({
-                name: f.name.replace(/\.mp3$/i, ''),
-                artist: '',
-                url: f.download_url,
-                cover: CONFIG.defaultCover
-            }));
-
-        /* =========================
-           1️⃣ 初始化 APlayer
-           ========================= */
         const ap = new APlayer({
             container: document.getElementById('player'),
             listFolded: false,
-            theme: '#1f3a8a',
             order: 'list',
+            theme: '#1f3a8a',
             listMaxHeight: '350px',
             audio: musicList
         });
 
-        /* =========================
-           2️⃣ 🔒 彻底关闭 APlayer 内部自动滚动
-           ========================= */
-        const list = document.querySelector('.aplayer-list');
-        if (list) {
-            list.style.scrollBehavior = 'auto';
-            list.style.overflowAnchor = 'none';
+        /* ===============================
+           方案二：彻底禁用 APlayer 自动滚动
+           =============================== */
 
-            // 硬拦截 scrollIntoView（APlayer 内部 Bug 根源）
-            if (!Element.prototype._aplayerScrollLocked) {
-                Element.prototype._aplayerScrollLocked = true;
-                Element.prototype.scrollIntoView = function () {};
+        const listEl = document.querySelector('.aplayer-list ol');
+
+        // 1️⃣ 禁止 APlayer 自己改 scrollTop
+        let lockScroll = false;
+
+        Object.defineProperty(listEl, 'scrollTop', {
+            set() {
+                if (!lockScroll) return;
             }
-        }
+        });
 
-        /* =========================
-           3️⃣ 🎯 我们自己精确控制滚动（不跳、不偏）
-           ========================= */
+        // 2️⃣ 用户点击时，我们自己算滚动位置
+        listEl.addEventListener('click', e => {
+            const li = e.target.closest('li');
+            if (!li) return;
+
+            lockScroll = true;
+
+            setTimeout(() => {
+                li.scrollIntoView({
+                    block: 'center',
+                    behavior: 'smooth'
+                });
+                lockScroll = false;
+            }, 60);
+        });
+
+        // 3️⃣ 切歌时也统一走我们这套
         ap.on('listswitch', () => {
-            const list = document.querySelector('.aplayer-list');
             const active = document.querySelector('.aplayer-list-light');
-            if (!list || !active) return;
+            if (!active) return;
 
-            const listRect = list.getBoundingClientRect();
-            const itemRect = active.getBoundingClientRect();
-
-            const delta =
-                itemRect.top -
-                listRect.top -
-                list.clientHeight / 2 +
-                itemRect.height / 2;
-
-            list.scrollTop += delta;
+            lockScroll = true;
+            setTimeout(() => {
+                active.scrollIntoView({
+                    block: 'center',
+                    behavior: 'smooth'
+                });
+                lockScroll = false;
+            }, 60);
         });
 
         statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
+
     } catch (err) {
-        statusEl.innerText = "同步失败，请检查网络";
         console.error(err);
+        statusEl.innerText = '同步失败，请检查网络或 JSON';
     }
 }
+
 initMusicStation();
 </script>
 </body>
