@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
     <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
     <style>
-        /* --- 1. 背景保持：#ebebeb --- */
+        /* --- 1. 你的背景设定 --- */
         body { 
             margin: 0; 
             background: #ebebeb; 
@@ -19,7 +19,7 @@
             min-height: 100vh; 
         }
 
-        /* --- 2. 你的极简透明卡片 UI --- */
+        /* --- 2. 你的极简毛玻璃卡片 UI (原样保留) --- */
         .main-card { 
             width: 95%; 
             max-width: 500px; 
@@ -35,13 +35,13 @@
         .header { color: rgb(31, 58, 138); text-align: center; margin-bottom: 25px; }
         .header h2 { font-weight: 600; letter-spacing: 1px; font-size: 1.2rem; }
 
-        /* --- 3. APlayer 核心布局与居中逻辑 --- */
+        /* --- 3. 你的标题居中与配色逻辑 (原样保留) --- */
         #player { border-radius: 15px; overflow: visible !important; }
         .aplayer { background: transparent !important; box-shadow: none !important; border: none !important; margin: 0 !important; }
         .aplayer .aplayer-info { background: transparent !important; padding: 0 !important; }
 
         .aplayer .aplayer-info .aplayer-music {
-            margin-left: -90px !important; 
+            margin-left: -90px !important; /* 你的精准居中位移 */
             width: calc(100% + 90px) !important; 
             margin-bottom: -28px !important;
             text-align: center !important;
@@ -55,8 +55,7 @@
         }
 
         /* 隐藏作者 */
-        .aplayer .aplayer-info .aplayer-music .aplayer-author,
-        .aplayer .aplayer-list ol li .aplayer-list-author { display: none !important; }
+        .aplayer-author, .aplayer-list-author { display: none !important; }
 
         .aplayer .aplayer-info, 
         .aplayer .aplayer-info .aplayer-controller {
@@ -68,6 +67,7 @@
             background: transparent !important;
         }
 
+        /* --- 4. 你的按钮与时间布局 (原样保留) --- */
         .aplayer .aplayer-info .aplayer-controller .aplayer-time {
             display: flex !important;
             justify-content: space-around !important; 
@@ -81,23 +81,20 @@
         /* 隐藏音量键 */
         .aplayer .aplayer-volume { visibility: hidden !important; pointer-events: none !important; }
 
-        /* 时间与进度条配色 */
-        .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner { display: inline !important; color: #666 !important; font-size: 13px !important; }
+        /* 你的圣母蓝配色细节 */
         .aplayer .aplayer-ptime { color: rgb(31, 58, 138) !important; font-weight: bold; }
         .aplayer .aplayer-dtime { color: #999 !important; }
         .aplayer .aplayer-icon svg { fill: rgb(31, 58, 138) !important; }
-        .aplayer .aplayer-bar-wrap .aplayer-bar { background: rgba(0, 0, 0, 0.1) !important; height: 3px !important; }
         .aplayer .aplayer-played { background: rgb(31, 58, 138) !important; }
-
-        /* 歌曲目录样式 */
-        .aplayer .aplayer-list { background: transparent !important; border: none !important; max-height: 350px !important; }
-        .aplayer .aplayer-info { margin-bottom: 60px !important; }
-        .aplayer .aplayer-list ol li { border: none !important; color: #444 !important; padding: 8px 15px !important; font-size: 15px !important; }
-        .aplayer .aplayer-list ol li:hover { background: rgba(31, 58, 138, 0.05) !important; }
         .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(31, 58, 138, 0.1) !important; }
         .aplayer .aplayer-list ol li .aplayer-list-cur { background: rgb(31, 58, 138) !important; }
 
-        /* 播放按钮 */
+        /* --- 5. 你的播放列表样式 --- */
+        .aplayer .aplayer-list { background: transparent !important; border: none !important; max-height: 350px !important; }
+        .aplayer .aplayer-info { margin-bottom: 60px !important; }
+        .aplayer .aplayer-list ol li { border: none !important; color: #444 !important; padding: 8px 15px !important; font-size: 15px !important; }
+
+        /* --- 6. 你的播放按钮样式 --- */
         .aplayer .aplayer-pic .aplayer-button {
             top: auto !important; left: auto !important; margin: 0 !important;
             bottom: 12px !important; right: 9px !important;
@@ -110,6 +107,7 @@
         }
         .aplayer .aplayer-pic .aplayer-button svg { width: 40px !important; height: 40px !important; fill: #fff !important; transform: none !important; margin: 0 !important; }
 
+        /* 加载动画 */
         .loading-dot { display: inline-block; width: 10px; height: 10px; border: 2px solid rgba(31, 58, 138, 0.2); border-radius: 50%; border-top-color: rgb(31, 58, 138); animation: spin 1s linear infinite; margin-right: 5px; vertical-align: middle; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
@@ -159,20 +157,13 @@
             });
 
             /* --- 🚀 核心修复：封印自动滚动函数 --- */
+            // 这里就是“焊死”列表的关键，它在播放器创建后立即生效
             if (ap.list) {
-                // 直接切断 APlayer 的滚动指令，让它无法控制列表位移
                 ap.list.scrollTo = function() { return false; };
             }
 
-            // 辅助保险：防止列表显示时瞬间的对焦
-            ap.on('listshow', () => {
-                setTimeout(() => {
-                    const list = document.querySelector('.aplayer-list');
-                    if (list) list.scrollTop = 0;
-                }, 10);
-            });
-
-            statusEl.innerText = `赞美天主，已成功加载 ${musicList.length} 首圣乐`;
+            // 成功提示
+            statusEl.innerText = `赞美天主，已加载 ${musicList.length} 首圣乐`;
         } catch (err) {
             statusEl.innerText = "同步失败，请刷新页面";
         }
