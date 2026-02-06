@@ -125,15 +125,24 @@
         .aplayer .aplayer-info {
             margin-bottom: 60px !important; 
         }
-       .aplayer .aplayer-list ol li {
-            border: none !important; 
-            color: #444 !important; 
-            font-size: 15px !important;
-            padding: 2px 15px !important; 
-            line-height: 24px !important; 
-            display: flex !important;
-            align-items: center !important;
-        }
+       .aplayer .aplayer-list {
+    background: transparent !important;
+    border: none !important; 
+    max-height: 350px !important;
+    /* 🚀 核心修复：强制取消所有自动滚动的平滑感，消除“跳动”视觉 */
+    scroll-behavior: auto !important; 
+}
+
+.aplayer .aplayer-list ol li {
+    border: none !important; 
+    color: #444 !important; 
+    padding: 2px 15px !important; /* 你最满意的 2 和 15 */
+    font-size: 15px !important; 
+    /* 🌟 解决阴影居中：通过固定行高，强制文字垂直锁定在色块中心 */
+    line-height: 26px !important; 
+    display: flex !important;
+    align-items: center !important;
+}
         }
         .aplayer .aplayer-list ol li:hover { background: rgba(31, 58, 138, 0.05) !important; }
         .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(31, 58, 138, 0.1) !important; }
@@ -213,20 +222,17 @@
         listMaxHeight: '350px',
         audio: musicList
     });
+            
+if (ap.list) {
+    // 1. 彻底废除 APlayer 的 scrollTo 原型链，让它根本发不出滚动指令
+    ap.list.scrollTo = function() { return false; };
 
-    // 3. ✅ 就在这里：加一段“焊死手术”代码 (加一次即可)
-    if (ap.list) {
-        // 拦截 APlayer 内部的滚动函数，不让它乱跳
-        ap.list.scrollTo = function() { return false; };
-        
-        const listEl = document.querySelector('.aplayer-list ol');
-        if (listEl) {
-            listEl.addEventListener('scroll', function(e) {
-                // 允许手动划动，但不允许 APlayer 自动跳转
-            }, { passive: true });
-        }
+    // 2. 暴力锁定：即使它尝试修改 scrollTop，我们也实时把它按住
+    const listEl = document.querySelector('.aplayer-list');
+    if (listEl) {
+        listEl.style.scrollBehavior = 'auto'; // 再次确认关闭平滑模式
     }
-
+}
     // 4. 最后显示成功文字
     statusEl.innerText = `赞美天主，已加载 ${musicList.length} 首圣乐`;
 
