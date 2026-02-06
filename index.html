@@ -226,30 +226,58 @@
 
     if (!Element.prototype._scrollIntoView) {
         Element.prototype._scrollIntoView = Element.prototype.scrollIntoView;
-        Element.prototype.scrollIntoView = function () {};
-    }
-})();
+        Element.prototype.scrollconst ap = new APlayer({
+            container: document.getElementById('player'),
+            listFolded: false,
+            theme: '#1f3a8a',
+            order: 'list',
+            listMaxHeight: '350px',
+            audio: musicList
+        });
 
-ap.on('listswitch', () => {
-    const list = document.querySelector('.aplayer-list');
-    const active = document.querySelector('.aplayer-list-light');
-    if (!list || !active) return;
+        /* =========================
+           2️⃣ 🔒 彻底关闭 APlayer 内部自动滚动
+           ========================= */
+        const list = document.querySelector('.aplayer-list');
+        if (list) {
+            list.style.scrollBehavior = 'auto';
+            list.style.overflowAnchor = 'none';
 
-    const target =
-        active.offsetTop -
-        list.clientHeight / 2 +
-        active.clientHeight / 2;
-
-    list.scrollTop = target;
-});
-
-statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
-        } catch (err) {
-            statusEl.innerText = "同步失败，请检查网络";
+            // 硬拦截 scrollIntoView（APlayer 内部 Bug 根源）
+            if (!Element.prototype._aplayerScrollLocked) {
+                Element.prototype._aplayerScrollLocked = true;
+                Element.prototype.scrollIntoView = function () {};
+            }
         }
-    }
 
-    initMusicStation();
+        /* =========================
+           3️⃣ 🎯 我们自己精确控制滚动（不跳、不偏）
+           ========================= */
+        ap.on('listswitch', () => {
+            const list = document.querySelector('.aplayer-list');
+            const active = document.querySelector('.aplayer-list-light');
+            if (!list || !active) return;
+
+            const listRect = list.getBoundingClientRect();
+            const itemRect = active.getBoundingClientRect();
+
+            const delta =
+                itemRect.top -
+                listRect.top -
+                list.clientHeight / 2 +
+                itemRect.height / 2;
+
+            list.scrollTop += delta;
+        });
+
+        statusEl.innerText = `已成功加载 ${musicList.length} 首云端歌曲`;
+    } catch (err) {
+        statusEl.innerText = "同步失败，请检查网络";
+        console.error(err);
+    }
+}
+
+initMusicStation();
 </script>
 </body>
 </html>
