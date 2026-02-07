@@ -206,7 +206,9 @@
                 listMaxHeight: '350px',
                 audio: musicList
             });
-
+           if (ap.list) {
+                ap.list.scrollTo = function() { return false; };
+           }
             ap.on('listswitch', () => {
                 setTimeout(() => {
                     const activeItem = document.querySelector('.aplayer-list-light');
