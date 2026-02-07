@@ -50,15 +50,16 @@
             border: none !important; 
         }
         /* 正在播放的歌名改为圣母蓝 */
-       ..aplayer .aplayer-info .aplayer-music .aplayer-title { 
-           color: rgb(31, 58, 138) !important; 
-           font-size: 1.2rem !important; 
-           display: block !important;
-           font-weight: bold;
-           line-height: 1.6 !important; 
-           overflow: visible !important;
-           padding-bottom: 2px !important;
+        .aplayer .aplayer-info .aplayer-music .aplayer-title { 
+            color: rgb(31, 58, 138) !important; 
+            font-size: 1.2rem !important; 
+            display: block !important;
+            font-weight: bold;
+            line-height: 1.4 !important; 
+            padding-bottom: 4px !important; 
+            overflow: visible !important;
         }
+
         /* 隐藏歌手名和占位符 */
         .aplayer .aplayer-info .aplayer-music .aplayer-author,
         .aplayer .aplayer-list ol li .aplayer-list-author { 
@@ -167,7 +168,7 @@
 <div class="main-card">
     <div class="header">
         <h2 style="margin:0;">🎵 和平之后圣乐分享</h2>
-        <p style="font-size:12px; opacity:0.6; margin-top:5px;" id="status">连接中...</p>
+        <p style="font-size:11px; opacity:0.6; margin-top:5px;" id="status">连接中...</p>
     </div>
     <div id="player"></div>
 </div>
@@ -197,27 +198,23 @@
                     cover: CONFIG.defaultCover
                 }));
 
-        const ap = new APlayer({
-            container: document.getElementById('player'),
-            listFolded: false, 
-            theme: '#1f3a8a', 
-            order: 'list',
-            listMaxHeight: '350px',
-            audio: musicList
-        });
-
-       if (ap.list) {
-    ap.list.scrollTo = function() { return false; }; 
-}
-
-statusEl.innerText = `赞美天主，已成功加载 ${musicList.length} 首歌曲`;
-
-    } catch (err) {
-        statusEl.innerText = "同步失败，请检查网络";
-    }
-}
-
-initMusicStation();
+            const ap = new APlayer({
+                container: document.getElementById('player'),
+                listFolded: false, 
+                theme: '#1f3a8a', 
+                order: 'list',
+                listMaxHeight: '350px',
+                audio: musicList
+            });
+            if (ap.list) {
+            ap.list.scrollTo = function() { return false; }; 
+            }
+            statusEl.innerText = `赞美天主，已成功加载 ${musicList.length} 首云端歌曲`;
+        } catch (err) {
+            statusEl.innerText = "同步失败，请检查网络";
+        }
+        }
+    initMusicStation();
 </script>
 </body>
 </html>
