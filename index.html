@@ -168,7 +168,7 @@
 <div class="main-card">
     <div class="header">
         <h2 style="margin:0;">🎵 和平之后圣乐分享</h2>
-        <p style="font-size:11px; opacity:0.6; margin-top:5px;" id="status">连接中...</p>
+        <p style="font-size:12px; opacity:0.6; margin-top:5px;" id="status">连接中...</p>
     </div>
     <div id="player"></div>
 </div>
@@ -198,7 +198,6 @@
                     cover: CONFIG.defaultCover
                 }));
 
-            // 1. 初始化播放器
         const ap = new APlayer({
             container: document.getElementById('player'),
             listFolded: false, 
@@ -208,14 +207,11 @@
             audio: musicList
         });
 
-        // 2. ✅ 核心封印：彻底禁止自动滚动
-        // 删掉之前的 ap.on('listswitch') 整个块，只留下面这一句
         if (ap.list) {
             ap.list.scrollTo = function() { return false; }; 
         }
 
-        // 3. 报喜文字
-        statusEl.innerText = `赞美天主，已成功加载 ${musicList.length} 首云端歌曲`;
+        statusEl.innerText = `赞美天主，已成功加载 ${musicList.length} 首歌曲`;
 
     } catch (err) {
         statusEl.innerText = "同步失败，请检查网络";
