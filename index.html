@@ -34,7 +34,7 @@
 
         /* 标题颜色调整为圣母蓝，确保可见 */
         .header { color: rgb(31, 58, 138); text-align: center; margin-bottom: 25px; }
-        .header h2 { font-weight: 600; letter-spacing: 1px; font-size: 1.2rem; }
+        .header h2 { font-weight: 600; letter-spacing: 1px; font-size: 1.3rem; }
 
         /* APlayer 核心布局 */
         #player { border-radius: 15px; overflow: visible !important; }
@@ -52,9 +52,12 @@
         /* 正在播放的歌名改为圣母蓝 */
         .aplayer .aplayer-info .aplayer-music .aplayer-title { 
             color: rgb(31, 58, 138) !important; 
-            font-size: 1.1rem !important; 
+            font-size: 1.2rem !important; 
             display: block !important;
             font-weight: bold;
+            line-height: 1.4 !important; 
+            padding-bottom: 4px !important; 
+            overflow: visible !important;
         }
 
         /* 隐藏歌手名和占位符 */
@@ -83,17 +86,11 @@
             background: none !important;
         }
 
-        /* 隐藏音量键 */
-        .aplayer .aplayer-volume {
-            visibility: hidden !important;
-            pointer-events: none !important;
-        }
-
         /* 时间显示：圣母蓝配色 */
         .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-time-inner {
             display: inline !important; 
             color: #666 !important; /* 时间文字改为深灰色 */
-            font-size: 13px !important;
+            font-size: 15px !important;
         }
         .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-ptime {
             color: rgb(31, 58, 138) !important; 
@@ -128,7 +125,7 @@
         .aplayer .aplayer-list ol li {
             border: none !important; 
             color: #444 !important; /* 列表文字改为深灰 */
-            padding: 8px 15px !important;
+            padding: 2px 15px !important;
             font-size: 15px !important; 
         }
         .aplayer .aplayer-list ol li:hover { background: rgba(31, 58, 138, 0.05) !important; }
@@ -183,64 +180,41 @@
         defaultCover: 'https://via.placeholder.com/300/ffffff/1f3a8a?text=Church+Music'
     };
 
-   async function initMusicStation() {
-    const statusEl = document.getElementById('status');
-    statusEl.innerHTML = '<span class="loading-dot"></span>正在连接云端...';
+    async function initMusicStation() {
+        const statusEl = document.getElementById('status');
+        statusEl.innerHTML = '<span class="loading-dot"></span>同步中...';
 
-    try {
-        // 1. 从 GitHub 获取文件列表
-        const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/`);
-        if (!resp.ok) throw new Error('API Fail');
-        const files = await resp.json();
-        
-        const musicList = files
-            .filter(f => f.name.toLowerCase().endsWith('.mp3'))
-            .map(f => ({
-                name: f.name.replace(/\.mp3$/i, ''),
-                artist: '', 
-                url: f.download_url || f.name,
-                cover: CONFIG.defaultCover
-            }));
+        try {
+            const resp = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/`);
+            if (!resp.ok) throw new Error('API Fail');
+            const files = await resp.json();
+            
+            const musicList = files
+                .filter(f => f.name.toLowerCase().endsWith('.mp3'))
+                .map(f => ({
+                    name: f.name.replace(/\.mp3$/i, ''),
+                    artist: '', 
+                    url: f.download_url || f.name,
+                    cover: CONFIG.defaultCover
+                }));
 
-        // 2. 初始化播放器
-        const ap = new APlayer({
-            container: document.getElementById('player'),
-            listFolded: false, 
-            theme: '#1f3a8a', // 圣母蓝
-            order: 'list',
-            listMaxHeight: '350px',
-            audio: musicList
-        });
-
-        /* ===============================
-           🚀 终极“焊死”方案：重写内部函数
-           =============================== */
-        if (ap.list) {
-            // 彻底切断 APlayer 的自动滚动指令
-            ap.list.scrollTo = function() {
-                return false; 
-            };
+            const ap = new APlayer({
+                container: document.getElementById('player'),
+                listFolded: false, 
+                theme: '#1f3a8a', 
+                order: 'list',
+                listMaxHeight: '350px',
+                audio: musicList
+            });
+            if (ap.list) {
+            ap.list.scrollTo = function() { return false; }; 
+            }
+            statusEl.innerText = `共有 ${musicList.length} 首圣歌`;
+        } catch (err) {
+            statusEl.innerText = "同步失败，请检查网络";
         }
-
-        // 辅助保险：防止列表展开时瞬间的对焦跳动
-        ap.on('listshow', () => {
-            setTimeout(() => {
-                const list = document.querySelector('.aplayer-list');
-                if (list) list.scrollTop = 0;
-            }, 10);
-        });
-
-        // 3. 成功反馈：明确显示“赞美天主”
-        statusEl.innerText = `赞美天主，已加载 ${musicList.length} 首圣乐`;
-
-    } catch (err) {
-        console.error(err);
-        statusEl.innerText = "同步失败，请检查网络或 JSON 配置";
-    }
-}
-
-// 启动程序
-initMusicStation();
+        }
+    initMusicStation();
 </script>
 </body>
 </html>
