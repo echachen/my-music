@@ -3,7 +3,7 @@
 ,
   {"title": "一生向祢歌唱", "src": "https://echachen.github.io/my-music/一生向祢歌唱.mp3"}
 ,
-  {"title": "一粒麥子-小羊詩歌(一粒麥子)", "src": "https://echachen.github.io/my-music/一粒麥子-小羊詩歌(一粒麥子).mp3"}
+  {"title": "一粒麥子", "src": "https://echachen.github.io/my-music/一粒麥子.mp3"}
 ,
   {"title": "万福至圣母后", "src": "https://echachen.github.io/my-music/万福至圣母后.mp3"}
 ,
@@ -51,9 +51,9 @@
 ,
   {"title": "光照我", "src": "https://echachen.github.io/my-music/光照我.mp3"}
 ,
-  {"title": "光阴似箭又一年", "src": "https://echachen.github.io/my-music/光阴似箭又一年.mp3"}
+  {"title": "光盐天主经", "src": "https://echachen.github.io/my-music/光盐天主经.mp3"}
 ,
-  {"title": "光鹽天主經", "src": "https://echachen.github.io/my-music/光鹽天主經.mp3"}
+  {"title": "光阴似箭又一年", "src": "https://echachen.github.io/my-music/光阴似箭又一年.mp3"}
 ,
   {"title": "全然為你", "src": "https://echachen.github.io/my-music/全然為你.mp3"}
 ,
@@ -85,6 +85,8 @@
 ,
   {"title": "圣母颂", "src": "https://echachen.github.io/my-music/圣母颂.mp3"}
 ,
+  {"title": "圣神的歌咏", "src": "https://echachen.github.io/my-music/圣神的歌咏.mp3"}
+,
   {"title": "圣若瑟答唱咏", "src": "https://echachen.github.io/my-music/圣若瑟答唱咏.mp3"}
 ,
   {"title": "基督之光 ", "src": "https://echachen.github.io/my-music/基督之光 .mp3"}
@@ -115,8 +117,6 @@
 ,
   {"title": "恭贺母皇", "src": "https://echachen.github.io/my-music/恭贺母皇.mp3"}
 ,
-  {"title": "愛喜樂生命", "src": "https://echachen.github.io/my-music/愛喜樂生命.mp3"}
-,
   {"title": "愛是不保留", "src": "https://echachen.github.io/my-music/愛是不保留.mp3"}
 ,
   {"title": "感恩有你", "src": "https://echachen.github.io/my-music/感恩有你.mp3"}
@@ -127,7 +127,7 @@
 ,
   {"title": "我想唱一首爱你的歌", "src": "https://echachen.github.io/my-music/我想唱一首爱你的歌.mp3"}
 ,
-  {"title": "我最愛的你", "src": "https://echachen.github.io/my-music/我最愛的你.mp3"}
+  {"title": "我最爱的你", "src": "https://echachen.github.io/my-music/我最爱的你.mp3"}
 ,
   {"title": "我的心你要称颂耶穌", "src": "https://echachen.github.io/my-music/我的心你要称颂耶穌.mp3"}
 ,
@@ -173,6 +173,8 @@
 ,
   {"title": "炼之歌", "src": "https://echachen.github.io/my-music/炼之歌.mp3"}
 ,
+  {"title": "爱喜乐生命", "src": "https://echachen.github.io/my-music/爱喜乐生命.mp3"}
+,
   {"title": "爱在每一天", "src": "https://echachen.github.io/my-music/爱在每一天.mp3"}
 ,
   {"title": "玛利亚之歌", "src": "https://echachen.github.io/my-music/玛利亚之歌.mp3"}
@@ -193,27 +195,23 @@
 ,
   {"title": "耶穌恩友", "src": "https://echachen.github.io/my-music/耶穌恩友.mp3"}
 ,
-  {"title": "聖神的歌詠", "src": "https://echachen.github.io/my-music/聖神的歌詠.mp3"}
-,
   {"title": "至圣玛利亚", "src": "https://echachen.github.io/my-music/至圣玛利亚.mp3"}
 ,
   {"title": "行神蹟的神", "src": "https://echachen.github.io/my-music/行神蹟的神.mp3"}
 ,
-  {"title": "請求瑪利亞", "src": "https://echachen.github.io/my-music/請求瑪利亞.mp3"}
+  {"title": "让我得见你的荣面", "src": "https://echachen.github.io/my-music/让我得见你的荣面.mp3"}
 ,
-  {"title": "讓我得見祢的榮面", "src": "https://echachen.github.io/my-music/讓我得見祢的榮面.mp3"}
+  {"title": "请求玛利亚", "src": "https://echachen.github.io/my-music/请求玛利亚.mp3"}
 ,
   {"title": "诸圣节", "src": "https://echachen.github.io/my-music/诸圣节.mp3"}
 ,
-  {"title": "賜福與你", "src": "https://echachen.github.io/my-music/賜福與你.mp3"}
-,
-  {"title": "赐福舆你", "src": "https://echachen.github.io/my-music/赐福舆你.mp3"}
+  {"title": "赐福与你", "src": "https://echachen.github.io/my-music/赐福与你.mp3"}
 ,
   {"title": "赞美的歌声唱不完", "src": "https://echachen.github.io/my-music/赞美的歌声唱不完.mp3"}
 ,
   {"title": "起初的爱", "src": "https://echachen.github.io/my-music/起初的爱.mp3"}
 ,
-  {"title": "輕輕聽", "src": "https://echachen.github.io/my-music/輕輕聽.mp3"}
+  {"title": "轻轻听", "src": "https://echachen.github.io/my-music/轻轻听.mp3"}
 ,
   {"title": "进教之佑", "src": "https://echachen.github.io/my-music/进教之佑.mp3"}
 ,
@@ -226,6 +224,8 @@
   {"title": "陪我走過春夏秋冬", "src": "https://echachen.github.io/my-music/陪我走過春夏秋冬.mp3"}
 ,
   {"title": "露德圣母", "src": "https://echachen.github.io/my-music/露德圣母.mp3"}
+,
+  {"title": "静静听主声音", "src": "https://echachen.github.io/my-music/静静听主声音.mp3"}
 ,
   {"title": "风雨中的恩典", "src": "https://echachen.github.io/my-music/风雨中的恩典.mp3"}
 ,
